@@ -6,7 +6,7 @@
 
 **Architecture:** Use a modular Next.js monolith whose feature modules expose narrow public interfaces and depend inward on domain types and ports. PostgreSQL stores structured content, local Docker volumes store media and web projects, Caddy routes the blog and labs hostnames, and a read-only static container serves untrusted web projects.
 
-**Tech Stack:** Node.js 24.18+, pnpm 11.11.0, Next.js 16.2.10, React 19.2.7, TypeScript 7.0.2, TipTap 3.27.3, Prisma 7.8.0, PostgreSQL 17, Vitest 4.1.10, Playwright 1.61.1, Zod 4.4.3, Argon2 0.44.0, Caddy 2, Docker Compose.
+**Tech Stack:** Node.js 24.18+, pnpm 11.11.0, Next.js 16.2.10, React 19.2.7, TypeScript 6.0.3, TipTap 3.27.3, Prisma 7.8.0, PostgreSQL 17, Vitest 4.1.10, Playwright 1.61.1, Zod 4.4.3, Argon2 0.44.0, Caddy 2, Docker Compose.
 
 ## Global Constraints
 
@@ -129,7 +129,7 @@ Create `package.json` with exact versions and scripts:
     "jsdom": "29.1.1",
     "prisma": "7.8.0",
     "tsx": "4.23.0",
-    "typescript": "7.0.2",
+    "typescript": "6.0.3",
     "vitest": "4.1.10",
     "yazl": "3.3.1"
   }
