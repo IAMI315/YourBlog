@@ -1,42 +1,9 @@
-import { readdir, readFile } from "node:fs/promises";
-import { extname, relative, resolve } from "node:path";
+import { execFileSync } from "node:child_process";
+import { readFile } from "node:fs/promises";
+import { relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const EXCLUDED_DIRECTORIES = new Set([".git", ".next", "coverage", "node_modules"]);
-const TEXT_EXTENSIONS = new Set([
-  ".cjs",
-  ".css",
-  ".csv",
-  ".env",
-  ".gql",
-  ".graphql",
-  ".html",
-  ".ini",
-  ".js",
-  ".json",
-  ".jsx",
-  ".md",
-  ".mdx",
-  ".mjs",
-  ".prisma",
-  ".ps1",
-  ".scss",
-  ".sh",
-  ".sql",
-  ".toml",
-  ".ts",
-  ".tsx",
-  ".txt",
-  ".xml",
-  ".yaml",
-  ".yml",
-]);
-const TEXT_FILE_NAMES = new Set([
-  ".editorconfig",
-  ".gitattributes",
-  ".gitignore",
-  ".npmrc",
-]);
 
 /**
  * @param {Buffer} buffer
@@ -64,40 +31,63 @@ export function inspectTextBuffer(buffer) {
 }
 
 /** @param {string} fileName */
-function isTextFile(fileName) {
-  return TEXT_FILE_NAMES.has(fileName) || TEXT_EXTENSIONS.has(extname(fileName).toLowerCase());
+function isExcluded(fileName) {
+  return fileName
+    .replaceAll("\\", "/")
+    .split("/")
+    .some((segment) => EXCLUDED_DIRECTORIES.has(segment));
 }
 
 /**
- * @param {string} directory
- * @param {string[]} files
+ * @param {string} repositoryRoot
+ * @returns {Promise<string[]>}
  */
-async function collectTextFiles(directory, files) {
-  const entries = await readdir(directory, { withFileTypes: true });
-  entries.sort((left, right) => left.name.localeCompare(right.name));
-
-  for (const entry of entries) {
-    const entryPath = resolve(directory, entry.name);
-    if (entry.isDirectory()) {
-      if (!EXCLUDED_DIRECTORIES.has(entry.name)) {
-        await collectTextFiles(entryPath, files);
+export async function collectRepositoryTextFiles(repositoryRoot) {
+  const textFiles = execFileSync(
+    "git",
+    ["ls-files", "-z", "--eol", "--cached", "--others", "--exclude-standard"],
+    { cwd: repositoryRoot, encoding: "utf8" },
+  )
+    .split("\0")
+    .flatMap((record) => {
+      const separatorIndex = record.indexOf("\t");
+      if (separatorIndex < 0) {
+        return [];
       }
-    } else if (entry.isFile() && isTextFile(entry.name)) {
-      files.push(entryPath);
-    }
-  }
+
+      const classification = record.slice(0, separatorIndex);
+      const fileName = record.slice(separatorIndex + 1);
+      const classificationTokens = new Set(classification.trim().split(/\s+/));
+      const isExplicitText = classificationTokens.has("attr/text");
+      const isBinary =
+        classificationTokens.has("attr/-text") ||
+        (!isExplicitText && classificationTokens.has("w/-text"));
+      return fileName.length > 0 && !isBinary && !isExcluded(fileName)
+        ? [resolve(repositoryRoot, fileName)]
+        : [];
+    });
+
+  return textFiles.sort((left, right) => left.localeCompare(right));
 }
 
 /** @param {string} repositoryRoot */
-async function checkRepository(repositoryRoot) {
-  /** @type {string[]} */
-  const files = [];
+export async function checkRepository(repositoryRoot) {
   /** @type {string[]} */
   const failures = [];
-  await collectTextFiles(repositoryRoot, files);
+  const files = await collectRepositoryTextFiles(repositoryRoot);
 
   for (const filePath of files) {
-    const result = inspectTextBuffer(await readFile(filePath));
+    let buffer;
+    try {
+      buffer = await readFile(filePath);
+    } catch (error) {
+      if (error instanceof Error && "code" in error && error.code === "ENOENT") {
+        continue;
+      }
+      throw error;
+    }
+
+    const result = inspectTextBuffer(buffer);
     if (!result.ok) {
       failures.push(`${relative(repositoryRoot, filePath).replaceAll("\\", "/")}: ${result.reason}`);
     }

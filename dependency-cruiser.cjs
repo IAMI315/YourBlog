@@ -1,3 +1,8 @@
+const DOMAIN_IMPLEMENTATION_PACKAGE =
+  "(?:(?:next|react|react-dom|@tiptap/react|sharp|yauzl-promise|yazl)(?:/|$)|@prisma(?:/|$)|prisma(?:/|$))";
+const RESOLVED_DOMAIN_IMPLEMENTATION =
+  `(?:${DOMAIN_IMPLEMENTATION_PACKAGE}|(?:\\.\\./)*node_modules/${DOMAIN_IMPLEMENTATION_PACKAGE}|(?:\\.\\./)*node_modules/\\.pnpm/[^/]+/node_modules/${DOMAIN_IMPLEMENTATION_PACKAGE})`;
+
 /** @type {import("dependency-cruiser").IConfiguration} */
 module.exports = {
   forbidden: [
@@ -21,7 +26,7 @@ module.exports = {
       severity: "error",
       from: { path: "^src/modules/[^/]+/domain/" },
       to: {
-        path: "^(?:(?:node:)?fs(?:/|$)|next(?:/|$)|react(?:/|$)|@prisma(?:/|$)|prisma(?:/|$)|node_modules/(?:(?:next|react)(?:/|$)|@prisma(?:/|$)|prisma(?:/|$))|node_modules/\\.pnpm/[^/]+/node_modules/(?:(?:next|react)(?:/|$)|@prisma(?:/|$)|prisma(?:/|$))|src/modules/[^/]+/(?:infrastructure|adapters)(?:/|$))",
+        path: `^(?:(?:node:)?(?:fs|http|https)(?:/|$)|${RESOLVED_DOMAIN_IMPLEMENTATION}|src/(?:(?:infrastructure|adapters)(?:/|$)|modules/[^/]+/(?:infrastructure|adapters)(?:/|$)))`,
       },
     },
   ],
