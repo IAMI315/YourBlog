@@ -68,7 +68,24 @@ Persistent volumes store PostgreSQL data, article media, published web-project f
 
 The application remains a modular monolith. Public pages, administration pages, content services, upload validation, and storage adapters have separate module boundaries but ship as one application container. This keeps deployment simple while allowing each unit to be tested independently.
 
-## 7. Administration Experience
+## 7. Code Architecture and Quality
+
+The codebase is organized by business capability rather than by technical file type. Initial feature modules are `auth`, `articles`, `taxonomy`, `media`, `web-projects`, `site-settings`, and `backups`. Each module owns its domain types, application services, persistence adapter, validation, and tests.
+
+Modules communicate only through documented public exports. A feature must not import another feature's internal files, database implementation, or UI internals. Shared code is limited to stable infrastructure primitives such as database access, storage ports, logging, HTTP errors, and reusable design-system controls. Business-specific helpers remain inside their owning feature.
+
+Dependencies point inward:
+
+1. Domain rules and types do not depend on Next.js, Prisma, the filesystem, or UI code.
+2. Application services depend on domain types and explicit ports.
+3. Prisma, filesystem, archive, image, and HTTP implementations satisfy those ports at the outer adapter layer.
+4. Routes and React components call application services through public module interfaces.
+
+Files and functions have one clear responsibility. TypeScript strict mode is mandatory. Public interfaces use explicit types, boundary input is validated, and errors use typed application error classes. Circular imports are rejected in continuous integration. Comments explain non-obvious decisions and security constraints rather than narrating straightforward code.
+
+UTF-8 is enforced end to end. Source, configuration, documentation, templates, migrations, and test fixtures use UTF-8 without a BOM and LF line endings. `.editorconfig` and repository checks enforce these rules. PostgreSQL is initialized with UTF-8 encoding. HTML and JSON responses declare UTF-8 explicitly. Tests include Chinese article titles, block content, file names, categories, search terms, export data, and error messages to catch encoding regressions.
+
+## 8. Administration Experience
 
 The administration interface contains these primary sections:
 
@@ -82,7 +99,7 @@ The administration interface contains these primary sections:
 
 The single administrator signs in at `/admin/login`. Successful login creates a secure server-side session represented by an `HttpOnly`, `Secure`, `SameSite=Lax` cookie. The password is stored as an Argon2 hash. Repeated login failures are rate limited. A forgotten password is reset with a one-time Docker command on the server.
 
-## 8. Article Workflow
+## 9. Article Workflow
 
 An article moves through the following workflow:
 
@@ -94,7 +111,7 @@ An article moves through the following workflow:
 
 Publishing is atomic: the visible article changes only after content, metadata, and search indexing complete successfully. Deleting an article moves it to a recycle bin for 30 days before permanent removal.
 
-## 9. Web-Project Upload Workflow
+## 10. Web-Project Upload Workflow
 
 The administrator can upload either a single `.html` file or a `.zip` package. The default upload limit is 100 MB and is configurable through an environment variable.
 
@@ -110,7 +127,7 @@ For a single HTML file, the application creates a version directory and stores t
 
 HTML, CSS, browser JavaScript, images, fonts, and other static assets are allowed. Server-side executable files are never run. Failed validation leaves the existing published version unchanged and returns a plain-language error. Each web project retains exactly the current version and the immediately previous published version; older versions are removed after the new publication completes successfully.
 
-## 10. Data Model
+## 11. Data Model
 
 ### Administrator
 
@@ -148,7 +165,7 @@ Stores the blog name, author profile, avatar, home-page text, navigation items, 
 
 Stores start and completion times, included data sets, archive size, status, and a sanitized error message when a backup fails.
 
-## 11. Error Handling and Security
+## 12. Error Handling and Security
 
 - Validate all browser inputs on the server and return field-specific, plain-language errors.
 - Do not expose server paths, credentials, SQL errors, or stack traces to the browser.
@@ -162,17 +179,17 @@ Stores start and completion times, included data sets, archive size, status, and
 - Publish articles and web-project versions with atomic state changes.
 - Emit structured logs for application errors, authentication events, upload validation, publishing, and backups while excluding secrets and article bodies.
 
-## 12. Backup and Recovery
+## 13. Backup and Recovery
 
 The backup service runs nightly. It creates a PostgreSQL dump and archives media plus published web-project files. It retains seven daily backups and four weekly backups. Backup status is displayed in the administration interface.
 
 The project documentation includes commands to restore the database, media files, and web-project volume into a clean deployment. Release acceptance includes restoring a backup and verifying that article and web-project URLs still work.
 
-## 13. Testing Strategy
+## 14. Testing Strategy
 
 ### Unit Tests
 
-Cover slug generation, article state transitions, authorization, storage-key generation, file-name normalization, archive path validation, size limits, file-count limits, and compression-ratio checks.
+Cover slug generation, article state transitions, authorization, storage-key generation, file-name normalization, archive path validation, size limits, file-count limits, compression-ratio checks, and UTF-8 round trips for Chinese content and file names.
 
 ### Integration Tests
 
@@ -197,13 +214,17 @@ Exercise path traversal, absolute archive paths, symbolic links, ZIP bombs, exce
 
 Capture and inspect screenshots for public, article, login, editor, media, and upload views at desktop, tablet, and mobile widths. Verify no overlap, clipping, blank images, or unreadable glass surfaces. Run automated accessibility checks and manually verify keyboard focus order, form labels, image alternative text, and reduced-motion behavior.
 
-## 14. Performance and Caching
+### Architecture Tests
+
+Check that feature modules import only their declared public interfaces, domain code has no framework or adapter dependencies, and the dependency graph contains no cycles. Repository checks reject non-UTF-8 text files, unexpected BOM markers, and inconsistent line endings.
+
+## 15. Performance and Caching
 
 Public pages use server rendering with cache invalidation on publish. Administration bundles are not loaded on public pages. Uploaded images generate responsive variants and modern formats. Public article pages expose appropriate cache headers, while administration and preview responses are private and non-cacheable.
 
 Database indexes cover article status and publication time, unique slugs, categories, tags, and web-project status. Search initially uses PostgreSQL full-text search, avoiding an additional search service.
 
-## 15. Deployment and Configuration
+## 16. Deployment and Configuration
 
 The repository provides:
 
@@ -215,7 +236,7 @@ The repository provides:
 
 The deployment succeeds when a clean server with Docker Compose can start the stack, initialize the database, create the administrator, obtain HTTPS certificates for both hostnames, and pass health checks.
 
-## 16. Acceptance Criteria
+## 17. Acceptance Criteria
 
 - The complete stack starts from a clean environment with Docker Compose.
 - A single administrator can sign in with a password and manage all site content through the browser.
@@ -223,5 +244,7 @@ The deployment succeeds when a clean server with Docker Compose can start the st
 - HTML and ZIP web projects pass security validation, preview on the isolated hostname, publish atomically, and roll back.
 - The public site follows the approved editorial glass design and remains readable and responsive.
 - Both hostnames use HTTPS, and uploaded scripts cannot access the administration session or API data.
+- Feature modules remain independently testable, expose narrow public interfaces, and pass dependency-boundary and circular-import checks.
+- All repository text, database content, and HTML or JSON responses preserve UTF-8 Chinese text without corruption.
 - Automated unit, integration, security, browser, visual, and accessibility tests pass.
 - A documented backup can be restored successfully into a clean deployment.
