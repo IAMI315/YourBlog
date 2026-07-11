@@ -201,7 +201,8 @@ export const WebProjectScalarFieldEnum = {
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   coverMediaId: 'coverMediaId',
-  currentVersionId: 'currentVersionId'
+  currentVersionId: 'currentVersionId',
+  currentVersionProjectId: 'currentVersionProjectId'
 } as const
 
 export type WebProjectScalarFieldEnum = (typeof WebProjectScalarFieldEnum)[keyof typeof WebProjectScalarFieldEnum]

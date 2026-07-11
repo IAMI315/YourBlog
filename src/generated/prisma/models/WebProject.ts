@@ -36,6 +36,7 @@ export type WebProjectMinAggregateOutputType = {
   updatedAt: Date | null
   coverMediaId: string | null
   currentVersionId: string | null
+  currentVersionProjectId: string | null
 }
 
 export type WebProjectMaxAggregateOutputType = {
@@ -50,6 +51,7 @@ export type WebProjectMaxAggregateOutputType = {
   updatedAt: Date | null
   coverMediaId: string | null
   currentVersionId: string | null
+  currentVersionProjectId: string | null
 }
 
 export type WebProjectCountAggregateOutputType = {
@@ -64,6 +66,7 @@ export type WebProjectCountAggregateOutputType = {
   updatedAt: number
   coverMediaId: number
   currentVersionId: number
+  currentVersionProjectId: number
   _all: number
 }
 
@@ -80,6 +83,7 @@ export type WebProjectMinAggregateInputType = {
   updatedAt?: true
   coverMediaId?: true
   currentVersionId?: true
+  currentVersionProjectId?: true
 }
 
 export type WebProjectMaxAggregateInputType = {
@@ -94,6 +98,7 @@ export type WebProjectMaxAggregateInputType = {
   updatedAt?: true
   coverMediaId?: true
   currentVersionId?: true
+  currentVersionProjectId?: true
 }
 
 export type WebProjectCountAggregateInputType = {
@@ -108,6 +113,7 @@ export type WebProjectCountAggregateInputType = {
   updatedAt?: true
   coverMediaId?: true
   currentVersionId?: true
+  currentVersionProjectId?: true
   _all?: true
 }
 
@@ -195,6 +201,7 @@ export type WebProjectGroupByOutputType = {
   updatedAt: Date
   coverMediaId: string | null
   currentVersionId: string | null
+  currentVersionProjectId: string | null
   _count: WebProjectCountAggregateOutputType | null
   _min: WebProjectMinAggregateOutputType | null
   _max: WebProjectMaxAggregateOutputType | null
@@ -230,6 +237,7 @@ export type WebProjectWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"WebProject"> | Date | string
   coverMediaId?: Prisma.StringNullableFilter<"WebProject"> | string | null
   currentVersionId?: Prisma.StringNullableFilter<"WebProject"> | string | null
+  currentVersionProjectId?: Prisma.StringNullableFilter<"WebProject"> | string | null
   coverMedia?: Prisma.XOR<Prisma.MediaAssetNullableScalarRelationFilter, Prisma.MediaAssetWhereInput> | null
   currentVersion?: Prisma.XOR<Prisma.WebProjectVersionNullableScalarRelationFilter, Prisma.WebProjectVersionWhereInput> | null
   versions?: Prisma.WebProjectVersionListRelationFilter
@@ -247,6 +255,7 @@ export type WebProjectOrderByWithRelationInput = {
   updatedAt?: Prisma.SortOrder
   coverMediaId?: Prisma.SortOrderInput | Prisma.SortOrder
   currentVersionId?: Prisma.SortOrderInput | Prisma.SortOrder
+  currentVersionProjectId?: Prisma.SortOrderInput | Prisma.SortOrder
   coverMedia?: Prisma.MediaAssetOrderByWithRelationInput
   currentVersion?: Prisma.WebProjectVersionOrderByWithRelationInput
   versions?: Prisma.WebProjectVersionOrderByRelationAggregateInput
@@ -256,6 +265,7 @@ export type WebProjectWhereUniqueInput = Prisma.AtLeast<{
   id?: string
   slug?: string
   currentVersionId?: string
+  currentVersionId_currentVersionProjectId?: Prisma.WebProjectCurrentVersionIdCurrentVersionProjectIdCompoundUniqueInput
   AND?: Prisma.WebProjectWhereInput | Prisma.WebProjectWhereInput[]
   OR?: Prisma.WebProjectWhereInput[]
   NOT?: Prisma.WebProjectWhereInput | Prisma.WebProjectWhereInput[]
@@ -267,10 +277,11 @@ export type WebProjectWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"WebProject"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"WebProject"> | Date | string
   coverMediaId?: Prisma.StringNullableFilter<"WebProject"> | string | null
+  currentVersionProjectId?: Prisma.StringNullableFilter<"WebProject"> | string | null
   coverMedia?: Prisma.XOR<Prisma.MediaAssetNullableScalarRelationFilter, Prisma.MediaAssetWhereInput> | null
   currentVersion?: Prisma.XOR<Prisma.WebProjectVersionNullableScalarRelationFilter, Prisma.WebProjectVersionWhereInput> | null
   versions?: Prisma.WebProjectVersionListRelationFilter
-}, "id" | "slug" | "currentVersionId">
+}, "id" | "slug" | "currentVersionId" | "currentVersionId_currentVersionProjectId">
 
 export type WebProjectOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -284,6 +295,7 @@ export type WebProjectOrderByWithAggregationInput = {
   updatedAt?: Prisma.SortOrder
   coverMediaId?: Prisma.SortOrderInput | Prisma.SortOrder
   currentVersionId?: Prisma.SortOrderInput | Prisma.SortOrder
+  currentVersionProjectId?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.WebProjectCountOrderByAggregateInput
   _max?: Prisma.WebProjectMaxOrderByAggregateInput
   _min?: Prisma.WebProjectMinOrderByAggregateInput
@@ -304,6 +316,7 @@ export type WebProjectScalarWhereWithAggregatesInput = {
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"WebProject"> | Date | string
   coverMediaId?: Prisma.StringNullableWithAggregatesFilter<"WebProject"> | string | null
   currentVersionId?: Prisma.StringNullableWithAggregatesFilter<"WebProject"> | string | null
+  currentVersionProjectId?: Prisma.StringNullableWithAggregatesFilter<"WebProject"> | string | null
 }
 
 export type WebProjectCreateInput = {
@@ -333,6 +346,7 @@ export type WebProjectUncheckedCreateInput = {
   updatedAt?: Date | string
   coverMediaId?: string | null
   currentVersionId?: string | null
+  currentVersionProjectId?: string | null
   versions?: Prisma.WebProjectVersionUncheckedCreateNestedManyWithoutProjectInput
 }
 
@@ -363,6 +377,7 @@ export type WebProjectUncheckedUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   coverMediaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   currentVersionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  currentVersionProjectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   versions?: Prisma.WebProjectVersionUncheckedUpdateManyWithoutProjectNestedInput
 }
 
@@ -378,6 +393,7 @@ export type WebProjectCreateManyInput = {
   updatedAt?: Date | string
   coverMediaId?: string | null
   currentVersionId?: string | null
+  currentVersionProjectId?: string | null
 }
 
 export type WebProjectUpdateManyMutationInput = {
@@ -404,6 +420,7 @@ export type WebProjectUncheckedUpdateManyInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   coverMediaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   currentVersionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  currentVersionProjectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type WebProjectListRelationFilter = {
@@ -414,6 +431,11 @@ export type WebProjectListRelationFilter = {
 
 export type WebProjectOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
+}
+
+export type WebProjectCurrentVersionIdCurrentVersionProjectIdCompoundUniqueInput = {
+  currentVersionId: string
+  currentVersionProjectId: string
 }
 
 export type WebProjectCountOrderByAggregateInput = {
@@ -428,6 +450,7 @@ export type WebProjectCountOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
   coverMediaId?: Prisma.SortOrder
   currentVersionId?: Prisma.SortOrder
+  currentVersionProjectId?: Prisma.SortOrder
 }
 
 export type WebProjectMaxOrderByAggregateInput = {
@@ -442,6 +465,7 @@ export type WebProjectMaxOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
   coverMediaId?: Prisma.SortOrder
   currentVersionId?: Prisma.SortOrder
+  currentVersionProjectId?: Prisma.SortOrder
 }
 
 export type WebProjectMinOrderByAggregateInput = {
@@ -456,6 +480,7 @@ export type WebProjectMinOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
   coverMediaId?: Prisma.SortOrder
   currentVersionId?: Prisma.SortOrder
+  currentVersionProjectId?: Prisma.SortOrder
 }
 
 export type WebProjectScalarRelationFilter = {
@@ -585,6 +610,7 @@ export type WebProjectUncheckedCreateWithoutCoverMediaInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   currentVersionId?: string | null
+  currentVersionProjectId?: string | null
   versions?: Prisma.WebProjectVersionUncheckedCreateNestedManyWithoutProjectInput
 }
 
@@ -629,6 +655,7 @@ export type WebProjectScalarWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"WebProject"> | Date | string
   coverMediaId?: Prisma.StringNullableFilter<"WebProject"> | string | null
   currentVersionId?: Prisma.StringNullableFilter<"WebProject"> | string | null
+  currentVersionProjectId?: Prisma.StringNullableFilter<"WebProject"> | string | null
 }
 
 export type WebProjectCreateWithoutVersionsInput = {
@@ -657,6 +684,7 @@ export type WebProjectUncheckedCreateWithoutVersionsInput = {
   updatedAt?: Date | string
   coverMediaId?: string | null
   currentVersionId?: string | null
+  currentVersionProjectId?: string | null
 }
 
 export type WebProjectCreateOrConnectWithoutVersionsInput = {
@@ -734,6 +762,7 @@ export type WebProjectUncheckedUpdateWithoutVersionsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   coverMediaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   currentVersionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  currentVersionProjectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type WebProjectUpsertWithoutCurrentVersionInput = {
@@ -786,6 +815,7 @@ export type WebProjectCreateManyCoverMediaInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   currentVersionId?: string | null
+  currentVersionProjectId?: string | null
 }
 
 export type WebProjectUpdateWithoutCoverMediaInput = {
@@ -813,6 +843,7 @@ export type WebProjectUncheckedUpdateWithoutCoverMediaInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   currentVersionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  currentVersionProjectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   versions?: Prisma.WebProjectVersionUncheckedUpdateManyWithoutProjectNestedInput
 }
 
@@ -827,6 +858,7 @@ export type WebProjectUncheckedUpdateManyWithoutCoverMediaInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   currentVersionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  currentVersionProjectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 
@@ -872,6 +904,7 @@ export type WebProjectSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
   updatedAt?: boolean
   coverMediaId?: boolean
   currentVersionId?: boolean
+  currentVersionProjectId?: boolean
   coverMedia?: boolean | Prisma.WebProject$coverMediaArgs<ExtArgs>
   currentVersion?: boolean | Prisma.WebProject$currentVersionArgs<ExtArgs>
   versions?: boolean | Prisma.WebProject$versionsArgs<ExtArgs>
@@ -890,6 +923,7 @@ export type WebProjectSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ex
   updatedAt?: boolean
   coverMediaId?: boolean
   currentVersionId?: boolean
+  currentVersionProjectId?: boolean
   coverMedia?: boolean | Prisma.WebProject$coverMediaArgs<ExtArgs>
   currentVersion?: boolean | Prisma.WebProject$currentVersionArgs<ExtArgs>
 }, ExtArgs["result"]["webProject"]>
@@ -906,6 +940,7 @@ export type WebProjectSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ex
   updatedAt?: boolean
   coverMediaId?: boolean
   currentVersionId?: boolean
+  currentVersionProjectId?: boolean
   coverMedia?: boolean | Prisma.WebProject$coverMediaArgs<ExtArgs>
   currentVersion?: boolean | Prisma.WebProject$currentVersionArgs<ExtArgs>
 }, ExtArgs["result"]["webProject"]>
@@ -922,9 +957,10 @@ export type WebProjectSelectScalar = {
   updatedAt?: boolean
   coverMediaId?: boolean
   currentVersionId?: boolean
+  currentVersionProjectId?: boolean
 }
 
-export type WebProjectOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "slug" | "summary" | "status" | "stableUrl" | "publishedAt" | "createdAt" | "updatedAt" | "coverMediaId" | "currentVersionId", ExtArgs["result"]["webProject"]>
+export type WebProjectOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "slug" | "summary" | "status" | "stableUrl" | "publishedAt" | "createdAt" | "updatedAt" | "coverMediaId" | "currentVersionId" | "currentVersionProjectId", ExtArgs["result"]["webProject"]>
 export type WebProjectInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   coverMedia?: boolean | Prisma.WebProject$coverMediaArgs<ExtArgs>
   currentVersion?: boolean | Prisma.WebProject$currentVersionArgs<ExtArgs>
@@ -959,6 +995,7 @@ export type $WebProjectPayload<ExtArgs extends runtime.Types.Extensions.Internal
     updatedAt: Date
     coverMediaId: string | null
     currentVersionId: string | null
+    currentVersionProjectId: string | null
   }, ExtArgs["result"]["webProject"]>
   composites: {}
 }
@@ -1396,6 +1433,7 @@ export interface WebProjectFieldRefs {
   readonly updatedAt: Prisma.FieldRef<"WebProject", 'DateTime'>
   readonly coverMediaId: Prisma.FieldRef<"WebProject", 'String'>
   readonly currentVersionId: Prisma.FieldRef<"WebProject", 'String'>
+  readonly currentVersionProjectId: Prisma.FieldRef<"WebProject", 'String'>
 }
     
 

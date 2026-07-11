@@ -140,21 +140,23 @@ model MediaAsset {
 }
 
 model WebProject {
-  id               String              @id @default(cuid())
-  title            String
-  slug             String              @unique
-  summary          String              @default("")
-  status           WebProjectStatus    @default(DRAFT)
-  stableUrl        String?
-  publishedAt      DateTime?
-  createdAt        DateTime            @default(now())
-  updatedAt        DateTime            @updatedAt
-  coverMediaId     String?
-  currentVersionId String?             @unique
-  coverMedia       MediaAsset?         @relation("WebProjectCover", fields: [coverMediaId], references: [id], onDelete: SetNull)
-  currentVersion   WebProjectVersion?  @relation("CurrentWebProjectVersion", fields: [currentVersionId], references: [id], onDelete: SetNull)
-  versions         WebProjectVersion[] @relation("WebProjectVersions")
+  id                      String              @id @default(cuid())
+  title                   String
+  slug                    String              @unique
+  summary                 String              @default("")
+  status                  WebProjectStatus    @default(DRAFT)
+  stableUrl               String?
+  publishedAt             DateTime?
+  createdAt               DateTime            @default(now())
+  updatedAt               DateTime            @updatedAt
+  coverMediaId            String?
+  currentVersionId        String?             @unique
+  currentVersionProjectId String?
+  coverMedia              MediaAsset?         @relation("WebProjectCover", fields: [coverMediaId], references: [id], onDelete: SetNull)
+  currentVersion          WebProjectVersion?  @relation("CurrentWebProjectVersion", fields: [currentVersionId, currentVersionProjectId], references: [id, projectId], onDelete: Restrict)
+  versions                WebProjectVersion[] @relation("WebProjectVersions")
 
+  @@unique([currentVersionId, currentVersionProjectId])
   @@index([status, publishedAt])
   @@index([coverMediaId])
 }
@@ -176,6 +178,7 @@ model WebProjectVersion {
   currentFor      WebProject? @relation("CurrentWebProjectVersion")
 
   @@unique([projectId, version])
+  @@unique([id, projectId])
   @@index([projectId, publishedAt])
 }
 

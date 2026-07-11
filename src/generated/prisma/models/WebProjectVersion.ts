@@ -305,6 +305,7 @@ export type WebProjectVersionWhereUniqueInput = Prisma.AtLeast<{
   id?: string
   storagePrefix?: string
   projectId_version?: Prisma.WebProjectVersionProjectIdVersionCompoundUniqueInput
+  id_projectId?: Prisma.WebProjectVersionIdProjectIdCompoundUniqueInput
   AND?: Prisma.WebProjectVersionWhereInput | Prisma.WebProjectVersionWhereInput[]
   OR?: Prisma.WebProjectVersionWhereInput[]
   NOT?: Prisma.WebProjectVersionWhereInput | Prisma.WebProjectVersionWhereInput[]
@@ -320,7 +321,7 @@ export type WebProjectVersionWhereUniqueInput = Prisma.AtLeast<{
   publishedAt?: Prisma.DateTimeNullableFilter<"WebProjectVersion"> | Date | string | null
   project?: Prisma.XOR<Prisma.WebProjectScalarRelationFilter, Prisma.WebProjectWhereInput>
   currentFor?: Prisma.XOR<Prisma.WebProjectNullableScalarRelationFilter, Prisma.WebProjectWhereInput> | null
-}, "id" | "storagePrefix" | "projectId_version">
+}, "id" | "storagePrefix" | "projectId_version" | "id_projectId">
 
 export type WebProjectVersionOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -486,6 +487,11 @@ export type WebProjectVersionOrderByRelationAggregateInput = {
 export type WebProjectVersionProjectIdVersionCompoundUniqueInput = {
   projectId: string
   version: number
+}
+
+export type WebProjectVersionIdProjectIdCompoundUniqueInput = {
+  id: string
+  projectId: string
 }
 
 export type WebProjectVersionCountOrderByAggregateInput = {
