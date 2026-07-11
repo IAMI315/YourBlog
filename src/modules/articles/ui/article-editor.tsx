@@ -22,6 +22,10 @@ type ArticleEditorProps = {
   initialValue: Record<string, unknown>;
   contentFieldName?: string;
   publishAction?: () => Promise<void>;
+  saveAsNewDraftAction?: (input: {
+    articleId: string;
+    value: Record<string, unknown>;
+  }) => Promise<{ id: string }>;
   save?: (input: AutosaveSaveInput) => Promise<AutosaveResult>;
 };
 
@@ -108,12 +112,14 @@ export function ArticleEditor({
   initialRevision,
   initialValue,
   publishAction,
+  saveAsNewDraftAction,
   save,
 }: ArticleEditorProps) {
   const [value, setValue] = useState(initialValue);
   const [activeType, setActiveType] = useState("paragraph");
   const [slashOpen, setSlashOpen] = useState(false);
   const [activeSlashIndex, setActiveSlashIndex] = useState(0);
+  const [isSavingConflictDraft, setIsSavingConflictDraft] = useState(false);
   const { currentRevision, isSaving, status } = useAutosave({
     articleId,
     value,
@@ -212,8 +218,21 @@ export function ArticleEditor({
         {status === "conflict" ? (
           <>
             <span>REVISION_CONFLICT</span>
-            <button type="button">Reload</button>
-            <button type="button">Save as new draft</button>
+            <button onClick={() => window.location.reload()} type="button">
+              Reload
+            </button>
+            <button
+              disabled={!saveAsNewDraftAction || isSavingConflictDraft}
+              onClick={async () => {
+                if (!saveAsNewDraftAction) return;
+                setIsSavingConflictDraft(true);
+                const result = await saveAsNewDraftAction({ articleId, value });
+                window.location.assign(`/admin/articles/${result.id}`);
+              }}
+              type="button"
+            >
+              Save as new draft
+            </button>
           </>
         ) : null}
       </div>

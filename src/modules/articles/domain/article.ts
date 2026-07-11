@@ -61,10 +61,14 @@ export type ArticleRevisionSummary = {
   createdAt: Date;
 };
 
+export type ArticleAdminListOptions = {
+  recycled?: boolean;
+};
+
 export interface ArticleQueryService {
   findPublishedBySlug(slug: string): Promise<StoredArticle | null>;
   listPublished(): Promise<ArticleSummary[]>;
-  listForAdmin(): Promise<ArticleAdminSummary[]>;
+  listForAdmin(options?: ArticleAdminListOptions): Promise<ArticleAdminSummary[]>;
   findForEditor(id: string): Promise<ArticleEditorRecord | null>;
   listRevisions(articleId: string): Promise<ArticleRevisionSummary[]>;
 }

@@ -13,8 +13,8 @@ export function createArticleQueryService({ repository }: QueryDependencies): Ar
     listPublished() {
       return repository.listPublished();
     },
-    listForAdmin() {
-      return repository.listForAdmin();
+    listForAdmin(options) {
+      return repository.listForAdmin(options);
     },
     findForEditor(id: string) {
       return repository.findForEditor(id);

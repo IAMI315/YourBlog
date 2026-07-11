@@ -1,5 +1,6 @@
 import type { ArticleRevisionSnapshot, StoredArticle } from "../domain/article";
 import type {
+  ArticleAdminListOptions,
   ArticleAdminSummary,
   ArticleEditorRecord,
   ArticleRevisionSummary,
@@ -20,7 +21,7 @@ export interface ArticleRepository {
   recover(id: string): Promise<void>;
   findPublishedBySlug(slug: string): Promise<StoredArticle | null>;
   listPublished(): Promise<Array<Pick<StoredArticle, "id" | "title" | "slug" | "summary" | "publishedAt">>>;
-  listForAdmin(): Promise<ArticleAdminSummary[]>;
+  listForAdmin(options?: ArticleAdminListOptions): Promise<ArticleAdminSummary[]>;
   findForEditor(id: string): Promise<ArticleEditorRecord | null>;
   listRevisions(articleId: string): Promise<ArticleRevisionSummary[]>;
 }

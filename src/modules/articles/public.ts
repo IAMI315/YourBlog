@@ -39,6 +39,7 @@ export const articleQueries = createArticleQueryService({ repository });
 
 export type {
   ArticleDraftInput,
+  ArticleAdminListOptions,
   ArticleQueryService,
   ArticleService,
   ArticleStatus,

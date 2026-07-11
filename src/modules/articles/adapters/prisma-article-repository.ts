@@ -1,7 +1,11 @@
 import type { PrismaClient } from "../../../generated/prisma/client";
 import { AppError } from "../../../infrastructure/errors/app-error";
 import { contentEquals, hasPublishableContent } from "../application/content";
-import type { ArticleRevisionSnapshot, StoredArticle } from "../domain/article";
+import type {
+  ArticleAdminListOptions,
+  ArticleRevisionSnapshot,
+  StoredArticle,
+} from "../domain/article";
 import type { ArticleRepository, SaveDraftRecord } from "../ports/article-repository";
 
 type PrismaArticleRow = {
@@ -281,8 +285,9 @@ export class PrismaArticleRepository implements ArticleRepository {
     });
   }
 
-  async listForAdmin() {
+  async listForAdmin(options: ArticleAdminListOptions = {}) {
     const articles = await this.prisma.article.findMany({
+      where: options.recycled ? { deletedAt: { not: null } } : { deletedAt: null },
       include: { category: { select: { name: true } } },
       orderBy: { updatedAt: "desc" },
     });

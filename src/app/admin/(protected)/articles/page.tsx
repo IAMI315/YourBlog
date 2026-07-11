@@ -2,11 +2,17 @@ import Link from "next/link";
 import { FilePlus2, Pencil } from "lucide-react";
 
 import { articleQueries } from "../../../../modules/articles/public";
-import { recycleArticleAction } from "./[id]/actions";
+import { recoverArticleAction, recycleArticleAction } from "./[id]/actions";
+import { RecoverArticleButton } from "./recover-article-button";
 import { RecycleArticleButton } from "./recycle-article-button";
 
-export default async function ArticlesPage() {
-  const articles = await articleQueries.listForAdmin();
+type ArticlesPageProps = {
+  searchParams?: Promise<{ view?: string }>;
+};
+
+export default async function ArticlesPage({ searchParams }: ArticlesPageProps) {
+  const isRecycleView = (await searchParams)?.view === "recycled";
+  const articles = await articleQueries.listForAdmin({ recycled: isRecycleView });
 
   return (
     <section className="admin-section" aria-labelledby="articles-title">
@@ -18,6 +24,14 @@ export default async function ArticlesPage() {
         <Link className="button" href="/admin/articles/new">
           <FilePlus2 size={18} />
           <span>新建文章</span>
+        </Link>
+      </div>
+      <div className="segmented-control" aria-label="Article list view">
+        <Link aria-current={!isRecycleView} href="/admin/articles">
+          全部
+        </Link>
+        <Link aria-current={isRecycleView} href="/admin/articles?view=recycled">
+          回收站
         </Link>
       </div>
       <table className="admin-table">
@@ -34,22 +48,30 @@ export default async function ArticlesPage() {
           {articles.map((article) => (
             <tr key={article.id}>
               <td>{article.title}</td>
-              <td>{article.status === "PUBLISHED" ? "已发布" : "草稿"}</td>
+              <td>
+                {isRecycleView ? "回收站" : article.status === "PUBLISHED" ? "已发布" : "草稿"}
+              </td>
               <td>{article.categoryName ?? "-"}</td>
               <td>{article.updatedAt.toLocaleString("zh-CN")}</td>
               <td>
                 <div className="admin-table__actions">
-                  <Link aria-label="编辑" href={`/admin/articles/${article.id}`}>
-                    <Pencil size={16} />
-                  </Link>
-                  <RecycleArticleButton action={recycleArticleAction.bind(null, article.id)} />
+                  {isRecycleView ? (
+                    <RecoverArticleButton action={recoverArticleAction.bind(null, article.id)} />
+                  ) : (
+                    <>
+                      <Link aria-label="编辑" href={`/admin/articles/${article.id}`}>
+                        <Pencil size={16} />
+                      </Link>
+                      <RecycleArticleButton action={recycleArticleAction.bind(null, article.id)} />
+                    </>
+                  )}
                 </div>
               </td>
             </tr>
           ))}
           {articles.length === 0 ? (
             <tr>
-              <td colSpan={5}>还没有文章。</td>
+              <td colSpan={5}>{isRecycleView ? "回收站是空的。" : "还没有文章。"}</td>
             </tr>
           ) : null}
         </tbody>

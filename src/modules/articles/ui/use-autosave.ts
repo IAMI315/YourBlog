@@ -24,10 +24,12 @@ type AutosaveOptions = {
 export function useAutosave({ articleId, value, revision, save }: AutosaveOptions) {
   const [status, setStatus] = useState<AutosaveStatus>("idle");
   const [currentRevision, setCurrentRevision] = useState(revision);
+  const [saveCycle, setSaveCycle] = useState(0);
   const currentRevisionRef = useRef(revision);
   const didMountRef = useRef(false);
-  const requestIdRef = useRef(0);
+  const isSavingRef = useRef(false);
   const latestValueRef = useRef(value);
+  const queuedSaveRef = useRef(false);
   const serializedValue = JSON.stringify(value);
 
   useEffect(() => {
@@ -41,12 +43,17 @@ export function useAutosave({ articleId, value, revision, save }: AutosaveOption
       return;
     }
 
-    requestIdRef.current += 1;
-    const requestId = requestIdRef.current;
+    if (isSavingRef.current) {
+      queuedSaveRef.current = true;
+      setStatus("pending");
+      return;
+    }
+
     const valueSnapshot = latestValueRef.current;
     setStatus("pending");
 
     const timeout = window.setTimeout(async () => {
+      isSavingRef.current = true;
       try {
         const result = await save({
           articleId,
@@ -54,7 +61,6 @@ export function useAutosave({ articleId, value, revision, save }: AutosaveOption
           expectedRevision: currentRevisionRef.current,
         });
 
-        if (requestIdRef.current !== requestId) return;
         if (result.ok) {
           currentRevisionRef.current = result.revision;
           setCurrentRevision(result.revision);
@@ -63,8 +69,13 @@ export function useAutosave({ articleId, value, revision, save }: AutosaveOption
           setStatus("conflict");
         }
       } catch {
-        if (requestIdRef.current === requestId) {
-          setStatus("unsynced");
+        setStatus("unsynced");
+      } finally {
+        isSavingRef.current = false;
+        if (queuedSaveRef.current) {
+          queuedSaveRef.current = false;
+          setStatus("pending");
+          setSaveCycle((cycle) => cycle + 1);
         }
       }
     }, 1500);
@@ -72,7 +83,7 @@ export function useAutosave({ articleId, value, revision, save }: AutosaveOption
     return () => {
       window.clearTimeout(timeout);
     };
-  }, [articleId, save, serializedValue]);
+  }, [articleId, save, saveCycle, serializedValue]);
 
   return { currentRevision, isSaving: status === "pending", status };
 }

@@ -4,6 +4,7 @@ import { act, cleanup, fireEvent, render, screen } from "@testing-library/react"
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { ArticleEditor } from "./article-editor";
+import type { AutosaveResult, AutosaveSaveInput } from "./use-autosave";
 
 const codeBlockLabel = "\u4ee3\u7801\u5757";
 const unsyncedStatus = "\u5c1a\u672a\u540c\u6b65";
@@ -117,5 +118,55 @@ describe("ArticleEditor", () => {
     expect(screen.getByRole("button", { name: "Reload" })).toBeTruthy();
     expect(screen.getByRole("button", { name: "Save as new draft" })).toBeTruthy();
     expect(screen.getByTestId("article-json").textContent).toContain("conflicting local edit");
+  });
+
+  it("serializes in-flight autosaves and replays the latest content with the new revision", async () => {
+    vi.useFakeTimers();
+    const pendingSaves: Array<(result: { ok: true; revision: number }) => void> = [];
+    const save = vi.fn(
+      (input: AutosaveSaveInput): Promise<AutosaveResult> => {
+        void input;
+
+        return new Promise<AutosaveResult>((resolve) => {
+          pendingSaves.push(resolve);
+        });
+      },
+    );
+    render(
+      <ArticleEditor
+        articleId="draft-1"
+        initialRevision={1}
+        initialValue={initialValue}
+        save={save}
+      />,
+    );
+    const editor = screen.getByRole("textbox", { name: "Article content" });
+
+    editor.textContent = "first edit";
+    fireEvent.input(editor);
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(1500);
+    });
+    expect(save).toHaveBeenCalledOnce();
+    expect(save.mock.calls[0]?.[0].expectedRevision).toBe(1);
+
+    editor.textContent = "latest edit";
+    fireEvent.input(editor);
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(1500);
+    });
+    expect(save).toHaveBeenCalledOnce();
+
+    await act(async () => {
+      pendingSaves[0]?.({ ok: true, revision: 2 });
+      await Promise.resolve();
+    });
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(1500);
+    });
+
+    expect(save).toHaveBeenCalledTimes(2);
+    expect(save.mock.calls[1]?.[0].expectedRevision).toBe(2);
+    expect(JSON.stringify(save.mock.calls[1]?.[0].value)).toContain("latest edit");
   });
 });

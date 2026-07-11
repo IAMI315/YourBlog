@@ -15,6 +15,11 @@ type AutosaveArticleInput = {
   expectedRevision: number;
 };
 
+type ConflictDraftInput = {
+  articleId: string;
+  value: Record<string, unknown>;
+};
+
 function parseContent(formData: FormData): Record<string, unknown> {
   const rawValue = String(formData.get("content") ?? "{}");
 
@@ -89,12 +94,44 @@ export async function autosaveArticleAction(input: AutosaveArticleInput) {
   }
 }
 
+export async function saveConflictAsNewDraftAction(input: ConflictDraftInput) {
+  const article = await articleQueries.findForEditor(input.articleId);
+
+  if (!article) {
+    throw new Error("Article not found.");
+  }
+
+  const result = await articleService.saveDraft({
+    title: `${article.title} conflict draft`,
+    slug: `${article.slug}-conflict-${Date.now()}`,
+    summary: article.summary,
+    coverMediaId: article.coverMediaId,
+    content: input.value,
+    categoryId: article.categoryId,
+    tagIds: article.tagIds,
+    seoTitle: article.seoTitle,
+    seoDescription: article.seoDescription,
+  });
+
+  return { id: result.id };
+}
+
 export async function publishArticleAction(id: string) {
   await articleService.publish(id);
   redirect(`/admin/articles/${id}?published=1`);
 }
 
+export async function restoreRevisionAction(id: string, revision: number) {
+  await articleService.restoreRevision(id, revision);
+  redirect(`/admin/articles/${id}?restored=${revision}`);
+}
+
 export async function recycleArticleAction(id: string) {
   await articleService.recycle(id);
   redirect("/admin/articles?recycled=1");
+}
+
+export async function recoverArticleAction(id: string) {
+  await articleService.recover(id);
+  redirect("/admin/articles?view=recycled&recovered=1");
 }

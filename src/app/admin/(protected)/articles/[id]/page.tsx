@@ -5,11 +5,14 @@ import { Eye, RotateCcw } from "lucide-react";
 import { articleQueries } from "../../../../../modules/articles/public";
 import { ArticleEditor } from "../../../../../modules/articles/ui/article-editor";
 import { ConfirmRecycleButton } from "./confirm-recycle-button";
+import { ConfirmRestoreRevisionButton } from "./confirm-restore-revision-button";
 import {
   autosaveArticleAction,
   publishArticleAction,
   recycleArticleAction,
+  restoreRevisionAction,
   saveArticleAction,
+  saveConflictAsNewDraftAction,
 } from "./actions";
 
 type ArticleEditorPageProps = {
@@ -43,6 +46,7 @@ export default async function ArticleEditorPage({ params }: ArticleEditorPagePro
             initialValue={article.content}
             publishAction={publishArticleAction.bind(null, id)}
             save={autosaveArticleAction}
+            saveAsNewDraftAction={saveConflictAsNewDraftAction}
           />
         </main>
         <aside className="article-admin__meta">
@@ -72,6 +76,10 @@ export default async function ArticleEditorPage({ params }: ArticleEditorPagePro
             {revisions.map((revision) => (
               <p key={revision.revision}>
                 #{revision.revision} {revision.title}
+                <ConfirmRestoreRevisionButton
+                  action={restoreRevisionAction.bind(null, id, revision.revision)}
+                  revision={revision.revision}
+                />
               </p>
             ))}
           </div>
