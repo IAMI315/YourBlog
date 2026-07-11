@@ -1,6 +1,6 @@
 param(
   [string]$BackupRoot = $(if ($env:BACKUP_ROOT) { $env:BACKUP_ROOT } else { "./backups" }),
-  [string]$ProjectName = $(if ($env:COMPOSE_PROJECT_NAME) { $env:COMPOSE_PROJECT_NAME } else { "tech-notes-blog" })
+  [string]$ProjectName = $(if ($env:COMPOSE_PROJECT_NAME) { $env:COMPOSE_PROJECT_NAME } else { "yourblog" })
 )
 
 $ErrorActionPreference = "Stop"

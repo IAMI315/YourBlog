@@ -6,10 +6,10 @@ import { updateSiteSettings as updateWithRepository } from "./application/update
 import { PrismaSiteSettingsRepository } from "./adapters/prisma-site-settings-repository";
 
 export const defaultSiteSettings: SiteSettings = {
-  blogName: "Tech Notes",
+  blogName: "YourBlog",
   authorName: "Admin",
   authorBio: "Personal technology tutorials and notes.",
-  homeTitle: "Tech Notes",
+  homeTitle: "YourBlog",
   homeDescription: "A practical notebook for technology tutorials, labs, and engineering notes.",
   avatarMediaId: null,
   navigation: [
@@ -20,7 +20,7 @@ export const defaultSiteSettings: SiteSettings = {
     { label: "About", href: "/about" },
   ],
   socialLinks: [],
-  seoTitle: "Tech Notes",
+  seoTitle: "YourBlog",
   seoDescription: "Personal technology tutorials and notes.",
 };
 

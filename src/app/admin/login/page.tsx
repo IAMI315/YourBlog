@@ -23,7 +23,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
           <LockKeyhole size={22} strokeWidth={1.8} />
         </div>
         <p className="admin-login__eyebrow">Admin</p>
-        <h1 id="admin-login-title">Sign in to Tech Notes</h1>
+        <h1 id="admin-login-title">Sign in to YourBlog</h1>
         <form action={loginAction} className="admin-login__form">
           <label htmlFor="password">Password</label>
           <input

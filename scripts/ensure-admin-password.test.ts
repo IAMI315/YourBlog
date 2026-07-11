@@ -12,8 +12,8 @@ const ROOT = resolve(import.meta.dirname, "..");
 
 describe("ensure-admin-password startup script", () => {
   it("uses the requested default administrator password", () => {
-    expect(DEFAULT_ADMIN_PASSWORD).toBe("YourNoteadmin");
-    expect(readConfiguredAdminPassword({})).toBe("YourNoteadmin");
+    expect(DEFAULT_ADMIN_PASSWORD).toBe("YourBlogadmin");
+    expect(readConfiguredAdminPassword({})).toBe("YourBlogadmin");
     expect(DEFAULT_ADMIN_PASSWORD).toHaveLength(MIN_ADMIN_PASSWORD_LENGTH);
   });
 
@@ -42,8 +42,8 @@ describe("ensure-admin-password startup script", () => {
     expect(dockerfile).toContain("scripts/start-production.mjs");
     expect(startScript).toContain("ensureAdminPassword");
     expect(startScript).toContain("readConfiguredAdminPassword");
-    expect(compose).toContain("ADMIN_PASSWORD: ${ADMIN_PASSWORD:-YourNoteadmin}");
-    expect(envExample).toContain("ADMIN_PASSWORD=YourNoteadmin");
+    expect(compose).toContain("ADMIN_PASSWORD: ${ADMIN_PASSWORD:-YourBlogadmin}");
+    expect(envExample).toContain("ADMIN_PASSWORD=YourBlogadmin");
     expect(script).toContain('DELETE FROM "Session"');
     expect(script).not.toContain("process.stdout.write(password");
   });

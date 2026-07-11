@@ -1,5 +1,5 @@
 {
-  "name": "tech-notes-blog",
+  "name": "yourblog",
   "version": "0.1.0",
   "private": true,
   "packageManager": "pnpm@11.11.0",
@@ -8,6 +8,10 @@
   },
   "scripts": {
     "dev": "next dev",
+    "setup:dev": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev-setup.ps1",
+    "verify:dev": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev-verify.ps1",
+    "db:dev:up": "docker compose -f compose.test.yaml up -d db",
+    "db:dev:down": "docker compose -f compose.test.yaml down",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",

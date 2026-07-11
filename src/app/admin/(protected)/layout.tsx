@@ -1,6 +1,14 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
-import { DatabaseBackup, FileText, FlaskConical, Home, Image as ImageIcon, Menu, Settings } from "lucide-react";
+import {
+  DatabaseBackup,
+  FileText,
+  FlaskConical,
+  Home,
+  Image as ImageIcon,
+  Menu,
+  Settings,
+} from "lucide-react";
 
 import { requireAdminSession } from "../../../modules/auth/public";
 
@@ -44,7 +52,7 @@ export default async function ProtectedAdminLayout({
     <div className="admin-shell">
       <aside className="admin-shell__sidebar">
         <Link className="admin-shell__brand" href="/admin">
-          Tech Notes
+          YourBlog
         </Link>
         <AdminNavigation />
       </aside>

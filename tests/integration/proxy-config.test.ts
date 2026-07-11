@@ -51,7 +51,9 @@ describe("production proxy and compose configuration", () => {
     expect(compose).toContain("POSTGRES_INITDB_ARGS=--encoding=UTF8");
     expect(compose).toContain("${HTTP_PORT:-80}:80");
     expect(compose).toContain("${HTTPS_PORT:-443}:443");
-    expect(compose).toContain("image: tech-notes-blog-app");
+    expect(compose).toContain("name: yourblog");
+    expect(compose).toContain("image: yourblog-app");
+    expect(compose).toContain("image: yourblog-labs");
     expect(compose).not.toContain("mcr.microsoft.com/powershell");
     expect(compose).not.toContain('command: ["sh"');
     expect(compose).toContain('"/usr/local/bin/node"');

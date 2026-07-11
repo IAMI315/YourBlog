@@ -1,3 +1,5 @@
+name: yourblog
+
 services:
   proxy:
     image: caddy:2.10-alpine
@@ -24,7 +26,7 @@ services:
       retries: 3
 
   app:
-    image: tech-notes-blog-app
+    image: yourblog-app
     build:
       context: .
       dockerfile: Dockerfile
@@ -37,7 +39,7 @@ services:
       DATABASE_URL: ${DATABASE_URL}
       AUTH_SECRET: ${AUTH_SECRET}
       WEB_PROJECT_UPLOAD_SECRET: ${WEB_PROJECT_UPLOAD_SECRET}
-      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-YourNoteadmin}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-YourBlogadmin}
       BLOG_HOST: ${BLOG_HOST}
       LABS_HOST: ${LABS_HOST}
       MEDIA_STORAGE_ROOT: /app/data/uploads
@@ -70,6 +72,7 @@ services:
       retries: 5
 
   labs:
+    image: yourblog-labs
     build:
       context: ./docker/labs
     restart: unless-stopped
@@ -84,7 +87,7 @@ services:
       retries: 3
 
   backup:
-    image: tech-notes-blog-app
+    image: yourblog-app
     restart: unless-stopped
     command: ["-e", "setInterval(() => {}, 2147483647)"]
     environment:

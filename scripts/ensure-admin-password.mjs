@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 import { argon2id, hash, verify } from "argon2";
 import pg from "pg";
 
-export const DEFAULT_ADMIN_PASSWORD = "YourNoteadmin";
+export const DEFAULT_ADMIN_PASSWORD = "YourBlogadmin";
 export const MIN_ADMIN_PASSWORD_LENGTH = 13;
 
 /**

@@ -1,6 +1,6 @@
 param(
   [string]$ArchivePath,
-  [string]$ProjectName = $(if ($env:COMPOSE_PROJECT_NAME) { $env:COMPOSE_PROJECT_NAME } else { "tech-notes-blog" })
+  [string]$ProjectName = $(if ($env:COMPOSE_PROJECT_NAME) { $env:COMPOSE_PROJECT_NAME } else { "yourblog" })
 )
 
 $ErrorActionPreference = "Stop"
