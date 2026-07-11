@@ -1,6 +1,8 @@
 import "dotenv/config";
 
-import { resetAdminPassword } from "../src/modules/auth/public";
+import { prisma } from "../src/infrastructure/db/prisma";
+import { resetAdminPasswordHash } from "../src/modules/auth/application/reset-admin-password";
+import { PrismaAuthRepository } from "../src/modules/auth/adapters/prisma-auth-repository";
 
 function readPasswordFromEnvironment(): string | null {
   return process.env.ADMIN_NEW_PASSWORD ?? null;
@@ -57,8 +59,10 @@ async function readHiddenPassword(prompt: string): Promise<string> {
 async function main() {
   const password =
     readPasswordFromEnvironment() ?? (await readHiddenPassword("New administrator password: "));
+  const repository = new PrismaAuthRepository(prisma);
+  const clock = { now: () => new Date() };
 
-  await resetAdminPassword(password);
+  await resetAdminPasswordHash({ repository, clock }, password);
   process.stdout.write("Administrator password reset. Existing sessions were revoked.\n");
 }
 
@@ -66,4 +70,6 @@ main().catch((error: unknown) => {
   const message = error instanceof Error ? error.message : "Unknown password reset failure.";
   process.stderr.write(`${message}\n`);
   process.exitCode = 1;
+}).finally(async () => {
+  await prisma.$disconnect();
 });
