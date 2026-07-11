@@ -1,11 +1,16 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Eye, RotateCcw, Send } from "lucide-react";
+import { Eye, RotateCcw } from "lucide-react";
 
 import { articleQueries } from "../../../../../modules/articles/public";
 import { ArticleEditor } from "../../../../../modules/articles/ui/article-editor";
 import { ConfirmRecycleButton } from "./confirm-recycle-button";
-import { publishArticleAction, recycleArticleAction, saveArticleAction } from "./actions";
+import {
+  autosaveArticleAction,
+  publishArticleAction,
+  recycleArticleAction,
+  saveArticleAction,
+} from "./actions";
 
 type ArticleEditorPageProps = {
   params: Promise<{ id: string }>;
@@ -36,6 +41,8 @@ export default async function ArticleEditorPage({ params }: ArticleEditorPagePro
             contentFieldName="content"
             initialRevision={article.revision}
             initialValue={article.content}
+            publishAction={publishArticleAction.bind(null, id)}
+            save={autosaveArticleAction}
           />
         </main>
         <aside className="article-admin__meta">
@@ -72,10 +79,6 @@ export default async function ArticleEditorPage({ params }: ArticleEditorPagePro
             <button className="button" type="submit">
               <RotateCcw size={16} />
               <span>保存</span>
-            </button>
-            <button className="button" formAction={publishArticleAction.bind(null, id)} type="submit">
-              <Send size={16} />
-              <span>发布</span>
             </button>
             <Link className="button" href={`/admin/articles/${id}/preview`}>
               <Eye size={16} />

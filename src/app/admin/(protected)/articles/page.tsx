@@ -1,7 +1,9 @@
 import Link from "next/link";
-import { FilePlus2, Pencil, Trash2 } from "lucide-react";
+import { FilePlus2, Pencil } from "lucide-react";
 
 import { articleQueries } from "../../../../modules/articles/public";
+import { recycleArticleAction } from "./[id]/actions";
+import { RecycleArticleButton } from "./recycle-article-button";
 
 export default async function ArticlesPage() {
   const articles = await articleQueries.listForAdmin();
@@ -40,9 +42,7 @@ export default async function ArticlesPage() {
                   <Link aria-label="编辑" href={`/admin/articles/${article.id}`}>
                     <Pencil size={16} />
                   </Link>
-                  <button aria-label="回收" type="button">
-                    <Trash2 size={16} />
-                  </button>
+                  <RecycleArticleButton action={recycleArticleAction.bind(null, article.id)} />
                 </div>
               </td>
             </tr>

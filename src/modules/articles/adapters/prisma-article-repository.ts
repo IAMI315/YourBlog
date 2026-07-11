@@ -1,4 +1,5 @@
 import type { PrismaClient } from "../../../generated/prisma/client";
+import { AppError } from "../../../infrastructure/errors/app-error";
 import { contentEquals, hasPublishableContent } from "../application/content";
 import type { ArticleRevisionSnapshot, StoredArticle } from "../domain/article";
 import type { ArticleRepository, SaveDraftRecord } from "../ports/article-repository";
@@ -86,6 +87,23 @@ export class PrismaArticleRepository implements ArticleRepository {
 
   async saveDraftWithRevision(input: SaveDraftRecord): Promise<{ id: string; revision: number }> {
     return this.prisma.$transaction(async (transaction) => {
+      if (input.id && typeof input.expectedRevision === "number") {
+        const latest = await transaction.articleRevision.findFirst({
+          where: { articleId: input.id },
+          orderBy: { revision: "desc" },
+          select: { revision: true },
+        });
+        const latestRevision = latest?.revision ?? 0;
+
+        if (latestRevision !== input.expectedRevision) {
+          throw new AppError(
+            "REVISION_CONFLICT",
+            409,
+            "This article changed remotely. Reload before saving.",
+          );
+        }
+      }
+
       const article = input.id
         ? await transaction.article.update({
             where: { id: input.id },

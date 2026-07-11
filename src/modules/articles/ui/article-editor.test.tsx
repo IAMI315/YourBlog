@@ -36,6 +36,7 @@ describe("ArticleEditor", () => {
     expect(screen.getByRole("button", { name: codeBlockLabel }).getAttribute("aria-pressed")).toBe(
       "true",
     );
+    expect(screen.getByTestId("article-json").textContent).toContain("codeBlock");
   });
 
   it("autosaves 1.5 seconds after the last edit and disables publish while saving", async () => {
@@ -81,8 +82,40 @@ describe("ArticleEditor", () => {
     await act(async () => {
       await vi.advanceTimersByTimeAsync(1500);
     });
+    expect(save).toHaveBeenCalledOnce();
+    await act(async () => {
+      await Promise.resolve();
+    });
 
     expect(screen.getByText(unsyncedStatus)).toBeTruthy();
     expect(screen.getByTestId("article-json").textContent).toContain("hello local");
+  });
+
+  it("keeps local content and offers conflict actions when the revision is stale", async () => {
+    vi.useFakeTimers();
+    const save = vi.fn().mockResolvedValue({ ok: false, code: "REVISION_CONFLICT" });
+    render(
+      <ArticleEditor
+        articleId="draft-1"
+        initialRevision={1}
+        initialValue={initialValue}
+        save={save}
+      />,
+    );
+    const editor = screen.getByRole("textbox", { name: "Article content" });
+
+    editor.textContent = "conflicting local edit";
+    fireEvent.input(editor);
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(1500);
+    });
+    await act(async () => {
+      await Promise.resolve();
+    });
+
+    expect(screen.getByText("REVISION_CONFLICT")).toBeTruthy();
+    expect(screen.getByRole("button", { name: "Reload" })).toBeTruthy();
+    expect(screen.getByRole("button", { name: "Save as new draft" })).toBeTruthy();
+    expect(screen.getByTestId("article-json").textContent).toContain("conflicting local edit");
   });
 });

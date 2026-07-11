@@ -8,24 +8,31 @@ export type AutosaveResult =
   | { ok: true; revision: number }
   | { ok: false; code: "REVISION_CONFLICT" };
 
+export type AutosaveSaveInput = {
+  articleId: string;
+  value: Record<string, unknown>;
+  expectedRevision: number;
+};
+
 type AutosaveOptions = {
   articleId: string;
   value: Record<string, unknown>;
   revision: number;
-  save?: (input: {
-    articleId: string;
-    value: Record<string, unknown>;
-    expectedRevision: number;
-    signal: AbortSignal;
-  }) => Promise<AutosaveResult>;
+  save?: (input: AutosaveSaveInput) => Promise<AutosaveResult>;
 };
 
 export function useAutosave({ articleId, value, revision, save }: AutosaveOptions) {
   const [status, setStatus] = useState<AutosaveStatus>("idle");
   const [currentRevision, setCurrentRevision] = useState(revision);
   const currentRevisionRef = useRef(revision);
-  const abortRef = useRef<AbortController | null>(null);
   const didMountRef = useRef(false);
+  const requestIdRef = useRef(0);
+  const latestValueRef = useRef(value);
+  const serializedValue = JSON.stringify(value);
+
+  useEffect(() => {
+    latestValueRef.current = value;
+  }, [value]);
 
   useEffect(() => {
     if (!save) return;
@@ -34,21 +41,20 @@ export function useAutosave({ articleId, value, revision, save }: AutosaveOption
       return;
     }
 
-    abortRef.current?.abort();
-    const controller = new AbortController();
-    abortRef.current = controller;
+    requestIdRef.current += 1;
+    const requestId = requestIdRef.current;
+    const valueSnapshot = latestValueRef.current;
     setStatus("pending");
 
     const timeout = window.setTimeout(async () => {
       try {
         const result = await save({
           articleId,
-          value,
+          value: valueSnapshot,
           expectedRevision: currentRevisionRef.current,
-          signal: controller.signal,
         });
 
-        if (controller.signal.aborted) return;
+        if (requestIdRef.current !== requestId) return;
         if (result.ok) {
           currentRevisionRef.current = result.revision;
           setCurrentRevision(result.revision);
@@ -57,7 +63,7 @@ export function useAutosave({ articleId, value, revision, save }: AutosaveOption
           setStatus("conflict");
         }
       } catch {
-        if (!controller.signal.aborted) {
+        if (requestIdRef.current === requestId) {
           setStatus("unsynced");
         }
       }
@@ -65,9 +71,8 @@ export function useAutosave({ articleId, value, revision, save }: AutosaveOption
 
     return () => {
       window.clearTimeout(timeout);
-      controller.abort();
     };
-  }, [articleId, save, value]);
+  }, [articleId, save, serializedValue]);
 
   return { currentRevision, isSaving: status === "pending", status };
 }
