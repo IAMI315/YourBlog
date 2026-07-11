@@ -140,6 +140,16 @@ describe("web project current version ownership", () => {
       prisma.webProject.update({
         where: { id: firstProject.id },
         data: {
+          currentVersionId: firstVersion.id,
+          currentVersionProjectId: null,
+        },
+      }),
+    ).rejects.toThrow("WebProject_currentVersion_owner_check");
+
+    await expect(
+      prisma.webProject.update({
+        where: { id: firstProject.id },
+        data: {
           currentVersionId: secondVersion.id,
           currentVersionProjectId: firstProject.id,
         },
