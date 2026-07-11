@@ -116,6 +116,41 @@ class InMemoryArticleRepository implements ArticleRepository {
         publishedAt,
       }));
   }
+
+  async listForAdmin() {
+    return Array.from(this.articles.values()).map((article) => ({
+      id: article.id,
+      title: article.title,
+      slug: article.slug,
+      summary: article.summary,
+      status: article.status,
+      publishedAt: article.publishedAt,
+      deletedAt: article.deletedAt,
+      categoryId: article.categoryId,
+      categoryName: null,
+      revision: this.revisions.get(article.id)?.at(-1)?.revision ?? 0,
+      updatedAt: NOW,
+    }));
+  }
+
+  async findForEditor(id: string) {
+    const article = this.articles.get(id);
+    if (!article) return null;
+    return {
+      ...article,
+      categoryName: null,
+      revision: this.revisions.get(id)?.at(-1)?.revision ?? 0,
+      updatedAt: NOW,
+    };
+  }
+
+  async listRevisions(articleId: string) {
+    return (this.revisions.get(articleId) ?? []).map((revision) => ({
+      revision: revision.revision,
+      title: revision.title,
+      createdAt: NOW,
+    }));
+  }
 }
 
 describe("article workflow", () => {

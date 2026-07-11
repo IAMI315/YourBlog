@@ -4,6 +4,7 @@ export type ArticleStatus = "DRAFT" | "PUBLISHED";
 
 export type ArticleDraftInput = {
   id?: string;
+  expectedRevision?: number;
   title: string;
   slug: string;
   summary: string;
@@ -39,7 +40,31 @@ export type ArticleSummary = Pick<
   "id" | "title" | "slug" | "summary" | "publishedAt"
 >;
 
+export type ArticleAdminSummary = Pick<
+  StoredArticle,
+  "id" | "title" | "slug" | "summary" | "status" | "publishedAt" | "deletedAt" | "categoryId"
+> & {
+  categoryName: string | null;
+  revision: number;
+  updatedAt: Date;
+};
+
+export type ArticleEditorRecord = StoredArticle & {
+  revision: number;
+  categoryName: string | null;
+  updatedAt: Date;
+};
+
+export type ArticleRevisionSummary = {
+  revision: number;
+  title: string;
+  createdAt: Date;
+};
+
 export interface ArticleQueryService {
   findPublishedBySlug(slug: string): Promise<StoredArticle | null>;
   listPublished(): Promise<ArticleSummary[]>;
+  listForAdmin(): Promise<ArticleAdminSummary[]>;
+  findForEditor(id: string): Promise<ArticleEditorRecord | null>;
+  listRevisions(articleId: string): Promise<ArticleRevisionSummary[]>;
 }

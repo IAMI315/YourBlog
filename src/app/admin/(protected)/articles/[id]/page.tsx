@@ -1,0 +1,90 @@
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { Eye, RotateCcw, Send } from "lucide-react";
+
+import { articleQueries } from "../../../../../modules/articles/public";
+import { ArticleEditor } from "../../../../../modules/articles/ui/article-editor";
+import { ConfirmRecycleButton } from "./confirm-recycle-button";
+import { publishArticleAction, recycleArticleAction, saveArticleAction } from "./actions";
+
+type ArticleEditorPageProps = {
+  params: Promise<{ id: string }>;
+};
+
+export default async function ArticleEditorPage({ params }: ArticleEditorPageProps) {
+  const { id } = await params;
+  const article = await articleQueries.findForEditor(id);
+  const revisions = await articleQueries.listRevisions(id);
+
+  if (!article) {
+    notFound();
+  }
+
+  return (
+    <section className="article-admin" aria-labelledby="article-title">
+      <form action={saveArticleAction.bind(null, id)} className="article-admin__layout">
+        <main className="article-admin__content">
+          <input
+            aria-label="文章标题"
+            className="article-admin__title"
+            defaultValue={article.title}
+            name="title"
+            required
+          />
+          <ArticleEditor
+            articleId={id}
+            contentFieldName="content"
+            initialRevision={article.revision}
+            initialValue={article.content}
+          />
+        </main>
+        <aside className="article-admin__meta">
+          <h1 id="article-title">编辑文章</h1>
+          <div className="segmented-control" aria-label="Preview mode">
+            <Link href={`/admin/articles/${id}/preview?mode=desktop`}>Desktop</Link>
+            <Link href={`/admin/articles/${id}/preview?mode=mobile`}>Mobile</Link>
+          </div>
+          <label>
+            Slug
+            <input defaultValue={article.slug} name="slug" />
+          </label>
+          <label>
+            摘要
+            <textarea defaultValue={article.summary} name="summary" rows={4} />
+          </label>
+          <label>
+            SEO 标题
+            <input defaultValue={article.seoTitle} name="seoTitle" />
+          </label>
+          <label>
+            SEO 描述
+            <textarea defaultValue={article.seoDescription} name="seoDescription" rows={4} />
+          </label>
+          <div className="revision-list">
+            <h2>修订</h2>
+            {revisions.map((revision) => (
+              <p key={revision.revision}>
+                #{revision.revision} {revision.title}
+              </p>
+            ))}
+          </div>
+          <div className="article-admin__actions">
+            <button className="button" type="submit">
+              <RotateCcw size={16} />
+              <span>保存</span>
+            </button>
+            <button className="button" formAction={publishArticleAction.bind(null, id)} type="submit">
+              <Send size={16} />
+              <span>发布</span>
+            </button>
+            <Link className="button" href={`/admin/articles/${id}/preview`}>
+              <Eye size={16} />
+              <span>预览</span>
+            </Link>
+          </div>
+          <ConfirmRecycleButton action={recycleArticleAction.bind(null, id)} />
+        </aside>
+      </form>
+    </section>
+  );
+}

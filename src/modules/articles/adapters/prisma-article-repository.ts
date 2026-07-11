@@ -16,7 +16,9 @@ type PrismaArticleRow = {
   status: "DRAFT" | "PUBLISHED";
   publishedAt: Date | null;
   deletedAt: Date | null;
+  updatedAt?: Date;
   tags?: Array<{ tagId: string }>;
+  category?: { name: string } | null;
 };
 
 type PrismaRevisionRow = {
@@ -29,6 +31,7 @@ type PrismaRevisionRow = {
   seoDescription: string;
   categoryId: string | null;
   tagIds: string[];
+  createdAt?: Date;
 };
 
 function contentToRecord(content: unknown): Record<string, unknown> {
@@ -257,6 +260,66 @@ export class PrismaArticleRepository implements ArticleRepository {
       where: { status: "PUBLISHED", deletedAt: null },
       orderBy: { publishedAt: "desc" },
       select: { id: true, title: true, slug: true, summary: true, publishedAt: true },
+    });
+  }
+
+  async listForAdmin() {
+    const articles = await this.prisma.article.findMany({
+      include: { category: { select: { name: true } } },
+      orderBy: { updatedAt: "desc" },
+    });
+
+    return Promise.all(
+      articles.map(async (article) => {
+        const latest = await this.prisma.articleRevision.findFirst({
+          where: { articleId: article.id },
+          orderBy: { revision: "desc" },
+          select: { revision: true },
+        });
+
+        return {
+          id: article.id,
+          title: article.title,
+          slug: article.slug,
+          summary: article.summary,
+          status: article.status,
+          publishedAt: article.publishedAt,
+          deletedAt: article.deletedAt,
+          categoryId: article.categoryId,
+          categoryName: article.category?.name ?? null,
+          revision: latest?.revision ?? 0,
+          updatedAt: article.updatedAt,
+        };
+      }),
+    );
+  }
+
+  async findForEditor(id: string) {
+    const article = await this.prisma.article.findUnique({
+      where: { id },
+      include: { tags: true, category: { select: { name: true } } },
+    });
+
+    if (!article) return null;
+    const latest = await this.prisma.articleRevision.findFirst({
+      where: { articleId: id },
+      orderBy: { revision: "desc" },
+      select: { revision: true },
+    });
+
+    return {
+      ...toStoredArticle(article),
+      categoryName: article.category?.name ?? null,
+      revision: latest?.revision ?? 0,
+      updatedAt: article.updatedAt,
+    };
+  }
+
+  async listRevisions(articleId: string) {
+    return this.prisma.articleRevision.findMany({
+      where: { articleId },
+      orderBy: { revision: "desc" },
+      select: { revision: true, title: true, createdAt: true },
     });
   }
 }

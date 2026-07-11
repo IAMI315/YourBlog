@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
-import { Home, Menu, Settings } from "lucide-react";
+import { FileText, Home, Menu, Settings } from "lucide-react";
 
 import { requireAdminSession } from "../../../modules/auth/public";
 
@@ -14,6 +14,10 @@ function AdminNavigation() {
       <Link href="/admin/settings">
         <Settings size={18} />
         <span>站点设置</span>
+      </Link>
+      <Link href="/admin/articles">
+        <FileText size={18} />
+        <span>文章</span>
       </Link>
     </nav>
   );
