@@ -1,13 +1,35 @@
 .env
 .env.*
 !.env.example
+
+# Dependencies and package-manager caches
 node_modules/
+.pnpm-store/
+
+# Framework/build output
 .next/
+dist/
+build/
+.turbo/
+.vercel/
+
+# Test and coverage output
 coverage/
 playwright-report/
 test-results/
+
+# Local project data
 .superpowers/
 data/
 /backups/
+
+# Logs and incremental caches
 *.log
+*-debug.log*
 *.tsbuildinfo
+
+# OS/editor noise
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
