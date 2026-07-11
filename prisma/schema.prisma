@@ -1,0 +1,211 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum ArticleStatus {
+  DRAFT
+  PUBLISHED
+}
+
+enum WebProjectStatus {
+  DRAFT
+  PUBLISHED
+}
+
+enum BackupStatus {
+  RUNNING
+  SUCCEEDED
+  FAILED
+}
+
+model Admin {
+  id                String    @id @default(cuid())
+  passwordHash      String
+  passwordChangedAt DateTime  @default(now())
+  lastLoginAt       DateTime?
+  createdAt         DateTime  @default(now())
+  sessions          Session[]
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  tokenHash String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  adminId   String
+  admin     Admin    @relation(fields: [adminId], references: [id], onDelete: Cascade)
+
+  @@index([adminId])
+  @@index([expiresAt])
+}
+
+model Article {
+  id             String            @id @default(cuid())
+  title          String
+  slug           String            @unique
+  summary        String            @default("")
+  content        Json
+  status         ArticleStatus     @default(DRAFT)
+  publishedAt    DateTime?
+  deletedAt      DateTime?
+  seoTitle       String            @default("")
+  seoDescription String            @default("")
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+  coverMediaId   String?
+  categoryId     String?
+  coverMedia     MediaAsset?       @relation("ArticleCover", fields: [coverMediaId], references: [id], onDelete: SetNull)
+  category       Category?         @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  revisions      ArticleRevision[]
+  tags           ArticleTag[]
+
+  @@index([status, publishedAt])
+  @@index([deletedAt])
+  @@index([categoryId])
+  @@index([coverMediaId])
+}
+
+model ArticleRevision {
+  id             String   @id @default(cuid())
+  articleId      String
+  revision       Int
+  title          String
+  summary        String
+  content        Json
+  seoTitle       String
+  seoDescription String
+  categoryId     String?
+  tagIds         String[]
+  createdAt      DateTime @default(now())
+  article        Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
+
+  @@unique([articleId, revision])
+  @@index([articleId, createdAt])
+}
+
+model Category {
+  id          String    @id @default(cuid())
+  name        String
+  slug        String    @unique
+  description String    @default("")
+  sortOrder   Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  articles    Article[]
+}
+
+model Tag {
+  id          String       @id @default(cuid())
+  name        String
+  slug        String       @unique
+  description String       @default("")
+  sortOrder   Int          @default(0)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  articles    ArticleTag[]
+}
+
+model ArticleTag {
+  articleId String
+  tagId     String
+  article   Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  tag       Tag     @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([articleId, tagId])
+  @@index([tagId])
+}
+
+model MediaAsset {
+  id            String         @id @default(cuid())
+  originalName  String
+  storageKey    String         @unique
+  mimeType      String
+  width         Int?
+  height        Int?
+  byteSize      BigInt
+  checksum      String
+  altText       String         @default("")
+  createdAt     DateTime       @default(now())
+  articleCovers Article[]      @relation("ArticleCover")
+  projectCovers WebProject[]   @relation("WebProjectCover")
+  siteAvatars   SiteSettings[] @relation("SiteAvatar")
+
+  @@index([checksum])
+  @@index([createdAt])
+}
+
+model WebProject {
+  id               String              @id @default(cuid())
+  title            String
+  slug             String              @unique
+  summary          String              @default("")
+  status           WebProjectStatus    @default(DRAFT)
+  stableUrl        String?
+  publishedAt      DateTime?
+  createdAt        DateTime            @default(now())
+  updatedAt        DateTime            @updatedAt
+  coverMediaId     String?
+  currentVersionId String?             @unique
+  coverMedia       MediaAsset?         @relation("WebProjectCover", fields: [coverMediaId], references: [id], onDelete: SetNull)
+  currentVersion   WebProjectVersion?  @relation("CurrentWebProjectVersion", fields: [currentVersionId], references: [id], onDelete: SetNull)
+  versions         WebProjectVersion[] @relation("WebProjectVersions")
+
+  @@index([status, publishedAt])
+  @@index([coverMediaId])
+}
+
+model WebProjectVersion {
+  id              String      @id @default(cuid())
+  projectId       String
+  version         Int
+  storagePrefix   String      @unique
+  entryPoint      String      @default("index.html")
+  compressedBytes BigInt
+  extractedBytes  BigInt
+  fileCount       Int
+  checksum        String
+  validation      Json
+  createdAt       DateTime    @default(now())
+  publishedAt     DateTime?
+  project         WebProject  @relation("WebProjectVersions", fields: [projectId], references: [id], onDelete: Cascade)
+  currentFor      WebProject? @relation("CurrentWebProjectVersion")
+
+  @@unique([projectId, version])
+  @@index([projectId, publishedAt])
+}
+
+model SiteSettings {
+  id              String      @id @default("site")
+  blogName        String
+  authorName      String
+  authorBio       String
+  homeTitle       String
+  homeDescription String
+  avatarMediaId   String?
+  avatarMedia     MediaAsset? @relation("SiteAvatar", fields: [avatarMediaId], references: [id], onDelete: SetNull)
+  navigation      Json
+  socialLinks     Json
+  seoTitle        String
+  seoDescription  String
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  @@index([avatarMediaId])
+}
+
+model BackupRecord {
+  id               String       @id @default(cuid())
+  startedAt        DateTime     @default(now())
+  completedAt      DateTime?
+  includedData     Json
+  archiveSize      BigInt?
+  status           BackupStatus @default(RUNNING)
+  safeErrorMessage String?
+
+  @@index([status, startedAt])
+}
