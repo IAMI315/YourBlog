@@ -1,4 +1,5 @@
 import type { PrismaClient } from "../../../generated/prisma/client";
+import { contentEquals, hasPublishableContent } from "../application/content";
 import type { ArticleRevisionSnapshot, StoredArticle } from "../domain/article";
 import type { ArticleRepository, SaveDraftRecord } from "../ports/article-repository";
 
@@ -19,7 +20,6 @@ type PrismaArticleRow = {
 };
 
 type PrismaRevisionRow = {
-  id: string;
   articleId: string;
   revision: number;
   title: string;
@@ -29,7 +29,6 @@ type PrismaRevisionRow = {
   seoDescription: string;
   categoryId: string | null;
   tagIds: string[];
-  createdAt: Date;
 };
 
 function contentToRecord(content: unknown): Record<string, unknown> {
@@ -82,7 +81,7 @@ function revisionToSnapshot(row: PrismaRevisionRow): ArticleRevisionSnapshot {
 export class PrismaArticleRepository implements ArticleRepository {
   constructor(private readonly prisma: PrismaClient) {}
 
-  async saveDraft(input: SaveDraftRecord): Promise<StoredArticle> {
+  async saveDraftWithRevision(input: SaveDraftRecord): Promise<{ id: string; revision: number }> {
     return this.prisma.$transaction(async (transaction) => {
       const article = input.id
         ? await transaction.article.update({
@@ -96,10 +95,7 @@ export class PrismaArticleRepository implements ArticleRepository {
               categoryId: input.categoryId,
               seoTitle: input.seoTitle,
               seoDescription: input.seoDescription,
-              tags: {
-                deleteMany: {},
-                create: input.tagIds.map((tagId) => ({ tagId })),
-              },
+              tags: { deleteMany: {}, create: input.tagIds.map((tagId) => ({ tagId })) },
             },
             include: { tags: true },
           })
@@ -117,16 +113,40 @@ export class PrismaArticleRepository implements ArticleRepository {
             },
             include: { tags: true },
           });
+      const storedArticle = toStoredArticle(article);
+      const latestRevision = await transaction.articleRevision.findFirst({
+        where: { articleId: storedArticle.id },
+        orderBy: { revision: "desc" },
+      });
 
-      return toStoredArticle(article);
+      if (latestRevision && contentEquals(contentToRecord(latestRevision.content), storedArticle.content)) {
+        return { id: storedArticle.id, revision: latestRevision.revision };
+      }
+
+      const revision = (latestRevision?.revision ?? 0) + 1;
+      await transaction.articleRevision.create({
+        data: {
+          articleId: storedArticle.id,
+          revision,
+          title: storedArticle.title,
+          summary: storedArticle.summary,
+          content: toPrismaJson(storedArticle.content),
+          seoTitle: storedArticle.seoTitle,
+          seoDescription: storedArticle.seoDescription,
+          categoryId: storedArticle.categoryId,
+          tagIds: storedArticle.tagIds,
+        },
+      });
+      await transaction.articleRevision.deleteMany({
+        where: { articleId: storedArticle.id, revision: { lt: revision - 19 } },
+      });
+
+      return { id: storedArticle.id, revision };
     });
   }
 
   async findById(id: string): Promise<StoredArticle | null> {
-    const article = await this.prisma.article.findUnique({
-      where: { id },
-      include: { tags: true },
-    });
+    const article = await this.prisma.article.findUnique({ where: { id }, include: { tags: true } });
 
     return article ? toStoredArticle(article) : null;
   }
@@ -185,23 +205,34 @@ export class PrismaArticleRepository implements ArticleRepository {
           seoTitle: snapshot.seoTitle,
           seoDescription: snapshot.seoDescription,
           categoryId: snapshot.categoryId,
-          tags: {
-            deleteMany: {},
-            create: snapshot.tagIds.map((tagId) => ({ tagId })),
-          },
+          tags: { deleteMany: {}, create: snapshot.tagIds.map((tagId) => ({ tagId })) },
         },
       });
     });
   }
 
-  async publish(id: string, publishedAt: Date): Promise<{ slug: string; publishedAt: Date }> {
-    const article = await this.prisma.article.update({
-      where: { id },
-      data: { status: "PUBLISHED", publishedAt },
-      select: { slug: true, publishedAt: true },
-    });
+  async publishReady(
+    id: string,
+    publishedAt: Date,
+  ): Promise<{ slug: string; publishedAt: Date } | null> {
+    return this.prisma.$transaction(async (transaction) => {
+      const article = await transaction.article.findUnique({
+        where: { id },
+        select: { title: true, content: true },
+      });
 
-    return { slug: article.slug, publishedAt: article.publishedAt ?? publishedAt };
+      if (!article?.title.trim() || !hasPublishableContent(contentToRecord(article.content))) {
+        return null;
+      }
+
+      const published = await transaction.article.update({
+        where: { id },
+        data: { status: "PUBLISHED", publishedAt },
+        select: { slug: true, publishedAt: true },
+      });
+
+      return { slug: published.slug, publishedAt: published.publishedAt ?? publishedAt };
+    });
   }
 
   async markDeleted(id: string, deletedAt: Date): Promise<void> {
@@ -210,5 +241,22 @@ export class PrismaArticleRepository implements ArticleRepository {
 
   async recover(id: string): Promise<void> {
     await this.prisma.article.update({ where: { id }, data: { deletedAt: null } });
+  }
+
+  async findPublishedBySlug(slug: string): Promise<StoredArticle | null> {
+    const article = await this.prisma.article.findFirst({
+      where: { slug, status: "PUBLISHED", deletedAt: null },
+      include: { tags: true },
+    });
+
+    return article ? toStoredArticle(article) : null;
+  }
+
+  async listPublished() {
+    return this.prisma.article.findMany({
+      where: { status: "PUBLISHED", deletedAt: null },
+      orderBy: { publishedAt: "desc" },
+      select: { id: true, title: true, slug: true, summary: true, publishedAt: true },
+    });
   }
 }

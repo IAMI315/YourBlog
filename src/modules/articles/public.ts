@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { prisma } from "../../infrastructure/db/prisma";
 import { saveDraft as saveDraftWithRepository } from "./application/save-draft";
 import { publishArticle as publishArticleWithRepository } from "./application/publish-article";
+import { createArticleQueryService } from "./application/query-articles";
 import { recycleArticle, recoverArticle } from "./application/recycle-article";
 import { restoreRevision as restoreRevisionWithRepository } from "./application/restore-revision";
 import { PrismaArticleRepository } from "./adapters/prisma-article-repository";
@@ -34,4 +35,12 @@ export const articleService: ArticleService = {
   },
 };
 
-export type { ArticleDraftInput, ArticleService, ArticleStatus } from "./domain/article";
+export const articleQueries = createArticleQueryService({ repository });
+
+export type {
+  ArticleDraftInput,
+  ArticleQueryService,
+  ArticleService,
+  ArticleStatus,
+  ArticleSummary,
+} from "./domain/article";

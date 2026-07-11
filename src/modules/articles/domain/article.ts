@@ -1,3 +1,5 @@
+import type { TaxonomyId } from "../../taxonomy/public";
+
 export type ArticleStatus = "DRAFT" | "PUBLISHED";
 
 export type ArticleDraftInput = {
@@ -7,8 +9,8 @@ export type ArticleDraftInput = {
   summary: string;
   coverMediaId: string | null;
   content: Record<string, unknown>;
-  categoryId: string | null;
-  tagIds: string[];
+  categoryId: TaxonomyId | null;
+  tagIds: TaxonomyId[];
   seoTitle: string;
   seoDescription: string;
 };
@@ -30,4 +32,14 @@ export interface ArticleService {
   restoreRevision(articleId: string, revision: number): Promise<void>;
   recycle(id: string): Promise<void>;
   recover(id: string): Promise<void>;
+}
+
+export type ArticleSummary = Pick<
+  StoredArticle,
+  "id" | "title" | "slug" | "summary" | "publishedAt"
+>;
+
+export interface ArticleQueryService {
+  findPublishedBySlug(slug: string): Promise<StoredArticle | null>;
+  listPublished(): Promise<ArticleSummary[]>;
 }

@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import type { Clock } from "../../../infrastructure/time/clock";
 import type { ArticleDraftInput, StoredArticle } from "../domain/article";
-import type { ArticleRepository } from "../ports/article-repository";
+import type { ArticleRepository, SaveDraftRecord } from "../ports/article-repository";
 import { publishArticle } from "./publish-article";
 import { recoverArticle, recycleArticle } from "./recycle-article";
 import { restoreRevision } from "./restore-revision";
@@ -10,17 +10,21 @@ import { saveDraft } from "./save-draft";
 
 const NOW = new Date("2026-07-11T10:00:00.000Z");
 const clock: Clock = { now: () => NOW };
+const CHINESE_TITLE = "\u6280\u672f\u6559\u7a0b";
+const CHINESE_SUMMARY = "\u6458\u8981";
+const CHINESE_BODY = "\u4f60\u597d";
+const CHINESE_DESCRIPTION = "\u4e2d\u6587\u79d1\u6280\u6559\u7a0b";
 
 const baseDraft: ArticleDraftInput = {
-  title: "技术教程",
+  title: CHINESE_TITLE,
   slug: "",
-  summary: "摘要",
+  summary: CHINESE_SUMMARY,
   coverMediaId: null,
-  content: { type: "doc", blocks: [{ type: "paragraph", text: "你好" }] },
+  content: { type: "doc", blocks: [{ type: "paragraph", text: CHINESE_BODY }] },
   categoryId: null,
   tagIds: [],
-  seoTitle: "技术教程",
-  seoDescription: "中文科技教程",
+  seoTitle: CHINESE_TITLE,
+  seoDescription: CHINESE_DESCRIPTION,
 };
 
 class InMemoryArticleRepository implements ArticleRepository {
@@ -29,9 +33,7 @@ class InMemoryArticleRepository implements ArticleRepository {
   nextRevision = new Map<string, number>();
   nextId = 1;
 
-  async saveDraft(input: Omit<StoredArticle, "id" | "status" | "publishedAt" | "deletedAt"> & {
-    id?: string;
-  }) {
+  async saveDraftWithRevision(input: SaveDraftRecord) {
     const id = input.id ?? `article-${this.nextId++}`;
     const existing = this.articles.get(id);
     const article: StoredArticle = {
@@ -42,7 +44,13 @@ class InMemoryArticleRepository implements ArticleRepository {
       deletedAt: existing?.deletedAt ?? null,
     };
     this.articles.set(id, article);
-    return article;
+    const latestRevision = await this.latestRevision(id);
+
+    if (latestRevision && JSON.stringify(latestRevision.content) === JSON.stringify(article.content)) {
+      return { id, revision: latestRevision.revision };
+    }
+
+    return { id, revision: await this.createRevision(article) };
   }
 
   async findById(id: string) {
@@ -69,9 +77,9 @@ class InMemoryArticleRepository implements ArticleRepository {
     this.articles.set(articleId, { ...snapshot });
   }
 
-  async publish(id: string, publishedAt: Date) {
+  async publishReady(id: string, publishedAt: Date) {
     const article = this.articles.get(id);
-    if (!article) throw new Error("Article not found");
+    if (!article?.title.trim() || Object.keys(article.content).length === 0) return null;
     const published = { ...article, status: "PUBLISHED" as const, publishedAt };
     this.articles.set(id, published);
     return { slug: published.slug, publishedAt };
@@ -88,6 +96,26 @@ class InMemoryArticleRepository implements ArticleRepository {
     if (!article) throw new Error("Article not found");
     this.articles.set(id, { ...article, deletedAt: null });
   }
+
+  async findPublishedBySlug(slug: string) {
+    return (
+      Array.from(this.articles.values()).find(
+        (article) => article.slug === slug && article.status === "PUBLISHED" && !article.deletedAt,
+      ) ?? null
+    );
+  }
+
+  async listPublished() {
+    return Array.from(this.articles.values())
+      .filter((article) => article.status === "PUBLISHED" && !article.deletedAt)
+      .map(({ id, title, slug, summary, publishedAt }) => ({
+        id,
+        title,
+        slug,
+        summary,
+        publishedAt,
+      }));
+  }
 }
 
 describe("article workflow", () => {
@@ -103,7 +131,10 @@ describe("article workflow", () => {
     const repository = new InMemoryArticleRepository();
     const first = await saveDraft({ repository }, baseDraft);
 
-    const second = await saveDraft({ repository }, { ...baseDraft, id: first.id, summary: "更新摘要" });
+    const second = await saveDraft(
+      { repository },
+      { ...baseDraft, id: first.id, summary: "\u66f4\u65b0\u6458\u8981" },
+    );
 
     expect(second.revision).toBe(1);
     expect(repository.revisions.get(first.id)).toHaveLength(1);
@@ -116,7 +147,7 @@ describe("article workflow", () => {
     for (let index = 0; index < 25; index++) {
       await saveDraft(
         { repository },
-        { ...baseDraft, id: first.id, content: { blocks: [{ text: `版本 ${index}` }] } },
+        { ...baseDraft, id: first.id, content: { blocks: [{ text: `version ${index}` }] } },
       );
     }
 

@@ -1,4 +1,5 @@
 export type TaxonomyKind = "category" | "tag";
+export type TaxonomyId = string;
 
 export type TaxonomyItem = {
   id: string;

@@ -1,7 +1,7 @@
 import "server-only";
 
 import { prisma } from "../../infrastructure/db/prisma";
-import type { TaxonomyInput, TaxonomyItem, TaxonomyKind } from "./domain/taxonomy";
+import type { TaxonomyId, TaxonomyInput, TaxonomyItem, TaxonomyKind } from "./domain/taxonomy";
 
 function normalizeSlug(slug: string) {
   return slug
@@ -42,4 +42,4 @@ export async function deleteTaxonomy(kind: TaxonomyKind, id: string): Promise<vo
   await prisma.tag.delete({ where: { id } });
 }
 
-export type { TaxonomyInput, TaxonomyItem, TaxonomyKind };
+export type { TaxonomyId, TaxonomyInput, TaxonomyItem, TaxonomyKind };
