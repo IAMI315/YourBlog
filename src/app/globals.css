@@ -14,4 +14,96 @@ body {
 
 body {
   font-family: Arial, sans-serif;
+  background:
+    linear-gradient(135deg, rgb(245 247 251 / 88%), rgb(225 232 242 / 72%)),
+    radial-gradient(circle at 20% 10%, rgb(134 196 255 / 38%), transparent 34%),
+    radial-gradient(circle at 80% 20%, rgb(174 129 255 / 28%), transparent 30%);
+  color: #10131a;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+.admin-login {
+  display: grid;
+  min-height: 100vh;
+  place-items: center;
+  padding: 32px;
+}
+
+.admin-login__panel {
+  width: min(100%, 420px);
+  border: 1px solid rgb(255 255 255 / 62%);
+  border-radius: 28px;
+  padding: 32px;
+  background: rgb(255 255 255 / 58%);
+  box-shadow: 0 24px 80px rgb(20 31 48 / 18%);
+  backdrop-filter: blur(24px);
+}
+
+.admin-login__icon {
+  display: grid;
+  width: 48px;
+  height: 48px;
+  place-items: center;
+  border: 1px solid rgb(255 255 255 / 70%);
+  border-radius: 16px;
+  background: rgb(255 255 255 / 48%);
+  color: #1a4f9c;
+}
+
+.admin-login__eyebrow {
+  margin: 24px 0 8px;
+  color: #526070;
+  font-size: 0.78rem;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.admin-login h1 {
+  margin: 0 0 24px;
+  font-size: 2rem;
+  line-height: 1.1;
+}
+
+.admin-login__form {
+  display: grid;
+  gap: 12px;
+}
+
+.admin-login__form label {
+  color: #374151;
+  font-size: 0.92rem;
+}
+
+.admin-login__form input {
+  width: 100%;
+  border: 1px solid rgb(99 112 134 / 26%);
+  border-radius: 14px;
+  padding: 12px 14px;
+  background: rgb(255 255 255 / 66%);
+  color: #10131a;
+  outline: none;
+}
+
+.admin-login__form input:focus {
+  border-color: rgb(38 111 255 / 64%);
+  box-shadow: 0 0 0 4px rgb(38 111 255 / 14%);
+}
+
+.admin-login__form button {
+  min-height: 46px;
+  border: 0;
+  border-radius: 14px;
+  background: #111827;
+  color: white;
+  cursor: pointer;
+}
+
+.admin-login__error {
+  margin: 0;
+  color: #b42318;
+  font-size: 0.9rem;
 }

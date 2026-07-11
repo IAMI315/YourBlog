@@ -53,6 +53,7 @@ export const AnyNull = runtime.AnyNull
 export const ModelName = {
   Admin: 'Admin',
   Session: 'Session',
+  LoginFailure: 'LoginFailure',
   Article: 'Article',
   ArticleRevision: 'ArticleRevision',
   Category: 'Category',
@@ -101,6 +102,15 @@ export const SessionScalarFieldEnum = {
 } as const
 
 export type SessionScalarFieldEnum = (typeof SessionScalarFieldEnum)[keyof typeof SessionScalarFieldEnum]
+
+
+export const LoginFailureScalarFieldEnum = {
+  id: 'id',
+  ipHash: 'ipHash',
+  occurredAt: 'occurredAt'
+} as const
+
+export type LoginFailureScalarFieldEnum = (typeof LoginFailureScalarFieldEnum)[keyof typeof LoginFailureScalarFieldEnum]
 
 
 export const ArticleScalarFieldEnum = {

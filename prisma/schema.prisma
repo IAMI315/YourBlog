@@ -44,6 +44,14 @@ model Session {
   @@index([expiresAt])
 }
 
+model LoginFailure {
+  id         String   @id @default(cuid())
+  ipHash     String
+  occurredAt DateTime @default(now())
+
+  @@index([ipHash, occurredAt])
+}
+
 model Article {
   id             String            @id @default(cuid())
   title          String

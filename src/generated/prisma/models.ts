@@ -10,6 +10,7 @@
  */
 export type * from './models/Admin'
 export type * from './models/Session'
+export type * from './models/LoginFailure'
 export type * from './models/Article'
 export type * from './models/ArticleRevision'
 export type * from './models/Category'
