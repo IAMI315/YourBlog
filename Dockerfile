@@ -21,18 +21,19 @@ RUN pnpm build
 FROM base AS runner
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
+ENV HOSTNAME=0.0.0.0
+ENV PORT=3000
 WORKDIR /app
 
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-RUN --mount=type=cache,id=pnpm-prod,target=/pnpm/store pnpm install --frozen-lockfile
-COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/prisma ./prisma
-COPY --from=builder /app/prisma.config.ts ./prisma.config.ts
+COPY --from=builder /app/scripts/apply-migrations.mjs ./scripts/apply-migrations.mjs
 COPY --from=builder /app/scripts/ensure-admin-password.mjs ./scripts/ensure-admin-password.mjs
 COPY --from=builder /app/src/generated ./src/generated
 
 RUN mkdir -p /app/data/uploads /app/data/web-projects
 
 EXPOSE 3000
-CMD ["sh", "-c", "pnpm exec prisma migrate deploy && node scripts/ensure-admin-password.mjs && pnpm start"]
+CMD ["sh", "-c", "node scripts/apply-migrations.mjs && node scripts/ensure-admin-password.mjs && node server.js"]

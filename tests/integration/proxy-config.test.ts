@@ -11,10 +11,21 @@ async function file(path: string): Promise<string> {
 describe("production proxy and compose configuration", () => {
   it("copies runtime files required by Prisma and native dependencies", async () => {
     const dockerfile = await file("Dockerfile");
+    const nextConfig = await file("next.config.ts");
+    const packageJson = JSON.parse(await file("package.json"));
 
     expect(dockerfile).toContain("ca-certificates openssl");
-    expect(dockerfile).toContain("pnpm-workspace.yaml");
-    expect(dockerfile).toContain("prisma.config.ts ./prisma.config.ts");
+    expect(dockerfile).toContain(".next/standalone");
+    expect(dockerfile).toContain("node server.js");
+    expect(dockerfile).toContain("ENV HOSTNAME=0.0.0.0");
+    expect(dockerfile).toContain("ENV PORT=3000");
+    expect(dockerfile).not.toContain("pnpm install --prod");
+    expect(dockerfile).toContain("scripts/apply-migrations.mjs");
+    expect(dockerfile).toContain("node scripts/apply-migrations.mjs");
+    expect(dockerfile).not.toContain("pnpm exec prisma migrate deploy");
+    expect(nextConfig).toContain('output: "standalone"');
+    expect(packageJson.dependencies.prisma).toBeUndefined();
+    expect(packageJson.devDependencies.prisma).toBeDefined();
   });
 
   it("defines isolated app, labs, database, proxy, and backup services with persistent volumes", async () => {
