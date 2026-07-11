@@ -1,0 +1,108 @@
+services:
+  proxy:
+    image: caddy:2.10-alpine
+    restart: unless-stopped
+    depends_on:
+      app:
+        condition: service_healthy
+      labs:
+        condition: service_healthy
+    environment:
+      BLOG_HOST: ${BLOG_HOST}
+      LABS_HOST: ${LABS_HOST}
+    ports:
+      - "${HTTP_PORT:-80}:80"
+      - "${HTTPS_PORT:-443}:443"
+    volumes:
+      - ./docker/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    healthcheck:
+      test: ["CMD", "caddy", "version"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  app:
+    image: tech-notes-blog-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: ${DATABASE_URL}
+      AUTH_SECRET: ${AUTH_SECRET}
+      WEB_PROJECT_UPLOAD_SECRET: ${WEB_PROJECT_UPLOAD_SECRET}
+      BLOG_HOST: ${BLOG_HOST}
+      LABS_HOST: ${LABS_HOST}
+      MEDIA_STORAGE_ROOT: /app/data/uploads
+      WEB_PROJECT_STORAGE_ROOT: /app/data/web-projects
+    expose:
+      - "3000"
+    volumes:
+      - media-data:/app/data/uploads
+      - labs-data:/app/data/web-projects:rw
+    healthcheck:
+      test: ["CMD-SHELL", "node -e \"fetch('http://127.0.0.1:3000/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))\""]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  db:
+    image: postgres:17-bookworm
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_INITDB_ARGS=--encoding=UTF8
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$${POSTGRES_USER}\" -d \"$${POSTGRES_DB}\""]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  labs:
+    build:
+      context: ./docker/labs
+    restart: unless-stopped
+    expose:
+      - "8080"
+    volumes:
+      - labs-data:/usr/share/nginx/html:ro
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1:8080/healthz"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  backup:
+    image: tech-notes-blog-app
+    restart: unless-stopped
+    command: ["sh", "-c", "while true; do sleep 3600; done"]
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      BACKUP_ROOT: /backups
+    volumes:
+      - backup-data:/backups
+      - media-data:/source/media:ro
+      - labs-data:/source/labs:ro
+    healthcheck:
+      test: ["CMD-SHELL", "node -e \"process.exit(0)\""]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  postgres-data:
+  media-data:
+  labs-data:
+  backup-data:
+  caddy-data:
+  caddy-config:

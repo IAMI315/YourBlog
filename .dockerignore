@@ -1,0 +1,9 @@
+.git
+.next
+node_modules
+data
+.superpowers
+coverage
+playwright-report
+test-results
+*.log

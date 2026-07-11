@@ -8,6 +8,6 @@ playwright-report/
 test-results/
 .superpowers/
 data/
-backups/
+/backups/
 *.log
 *.tsbuildinfo

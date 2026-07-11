@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
-import { FileText, FlaskConical, Home, Image as ImageIcon, Menu, Settings } from "lucide-react";
+import { DatabaseBackup, FileText, FlaskConical, Home, Image as ImageIcon, Menu, Settings } from "lucide-react";
 
 import { requireAdminSession } from "../../../modules/auth/public";
 
@@ -26,6 +26,10 @@ function AdminNavigation() {
       <Link href="/admin/web-projects">
         <FlaskConical size={18} />
         <span>网页项目</span>
+      </Link>
+      <Link href="/admin/backups">
+        <DatabaseBackup size={18} />
+        <span>备份</span>
       </Link>
     </nav>
   );

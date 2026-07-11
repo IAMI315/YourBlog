@@ -3,6 +3,8 @@ import { articleQueries } from "../../modules/articles/public";
 import { getMediaUrl } from "../../modules/media/public";
 import { getSiteSettings } from "../../modules/site-settings/public";
 
+export const dynamic = "force-dynamic";
+
 export default async function HomePage() {
   const [settings, articles] = await Promise.all([
     getSiteSettings(),

@@ -2,6 +2,8 @@ import { ExternalLink } from "lucide-react";
 
 import { listPublishedWebProjects } from "../../../modules/web-projects/public";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "Labs",
   description: "浏览可交互的网页项目和实验教程。",

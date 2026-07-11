@@ -1,0 +1,30 @@
+{
+	email off
+}
+
+{$BLOG_HOST} {
+	encode zstd gzip
+	header {
+		X-Content-Type-Options nosniff
+		Referrer-Policy strict-origin-when-cross-origin
+	}
+	reverse_proxy app:3000
+}
+
+{$LABS_HOST} {
+	encode zstd gzip
+	header {
+		X-Content-Type-Options nosniff
+		Referrer-Policy no-referrer
+	}
+
+	@previews path /previews/*
+	header @previews Cache-Control "no-store"
+
+	@blocked path /api* /admin*
+	respond @blocked 404
+
+	reverse_proxy labs:8080 {
+		header_down -Set-Cookie
+	}
+}

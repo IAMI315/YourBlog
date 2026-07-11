@@ -1,5 +1,7 @@
 import { getSiteSettings } from "../../../modules/site-settings/public";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "关于",
   description: "关于作者和这个技术博客。",

@@ -6,6 +6,8 @@ import { SiteHeader } from "../components/site/header";
 import { getSiteSettings } from "../modules/site-settings/public";
 import "./globals.css";
 
+export const dynamic = "force-dynamic";
+
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSiteSettings();
 

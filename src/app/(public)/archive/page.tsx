@@ -2,6 +2,8 @@ import Link from "next/link";
 
 import { articleQueries } from "../../../modules/articles/public";
 
+export const dynamic = "force-dynamic";
+
 function yearFor(date: Date | null): string {
   return date ? String(date.getFullYear()) : "未发布";
 }

@@ -2,6 +2,8 @@ import Link from "next/link";
 
 import { articleQueries, searchArticles } from "../../../modules/articles/public";
 
+export const dynamic = "force-dynamic";
+
 type TutorialsPageProps = {
   searchParams?: Promise<{ q?: string }>;
 };
