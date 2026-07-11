@@ -1,20 +1,33 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
+import { SiteFooter } from "../components/site/footer";
+import { SiteHeader } from "../components/site/header";
+import { getSiteSettings } from "../modules/site-settings/public";
 import "./globals.css";
 
-export const metadata: Metadata = {
-  title: "Tech Notes",
-  description: "Personal technology tutorials and notes.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getSiteSettings();
 
-export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
+  return {
+    title: settings.seoTitle || settings.blogName,
+    description: settings.seoDescription || settings.homeDescription,
+  };
+}
+
+export default async function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
+  const settings = await getSiteSettings();
+
   return (
     <html lang="zh-CN">
       <head>
         <meta charSet="utf-8" />
       </head>
-      <body>{children}</body>
+      <body>
+        <SiteHeader settings={settings} />
+        {children}
+        <SiteFooter settings={settings} />
+      </body>
     </html>
   );
 }
