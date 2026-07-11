@@ -29,9 +29,10 @@ COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/prisma.config.ts ./prisma.config.ts
+COPY --from=builder /app/scripts/ensure-admin-password.mjs ./scripts/ensure-admin-password.mjs
 COPY --from=builder /app/src/generated ./src/generated
 
 RUN mkdir -p /app/data/uploads /app/data/web-projects
 
 EXPOSE 3000
-CMD ["sh", "-c", "pnpm exec prisma migrate deploy && pnpm start"]
+CMD ["sh", "-c", "pnpm exec prisma migrate deploy && node scripts/ensure-admin-password.mjs && pnpm start"]

@@ -15,12 +15,12 @@ function createRepository(): AdminPasswordRepository {
 }
 
 describe("resetAdminPasswordHash", () => {
-  it("rejects passwords shorter than fourteen characters", async () => {
+  it("rejects passwords shorter than thirteen characters", async () => {
     const repository = createRepository();
 
     await expect(
       resetAdminPasswordHash({ repository, clock }, "too-short"),
-    ).rejects.toThrow("at least 14 characters");
+    ).rejects.toThrow("at least 13 characters");
     expect(repository.resetAdminPasswordHash).not.toHaveBeenCalled();
   });
 

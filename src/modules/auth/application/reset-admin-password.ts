@@ -3,7 +3,7 @@ import { argon2id, hash } from "argon2";
 import type { Clock } from "../../../infrastructure/time/clock";
 import type { AdminPasswordRepository } from "../ports/auth-repository";
 
-export const MIN_ADMIN_PASSWORD_LENGTH = 14;
+export const MIN_ADMIN_PASSWORD_LENGTH = 13;
 
 type ResetAdminPasswordDependencies = {
   repository: AdminPasswordRepository;
