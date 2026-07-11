@@ -1,6 +1,10 @@
 import type { PrismaClient } from "../../../generated/prisma/client";
 import { AppError } from "../../../infrastructure/errors/app-error";
-import { contentEquals, hasPublishableContent } from "../application/content";
+import {
+  contentEquals,
+  hasImagesMissingAltText,
+  hasPublishableContent,
+} from "../application/content";
 import type {
   ArticleAdminListOptions,
   ArticleRevisionSnapshot,
@@ -243,10 +247,20 @@ export class PrismaArticleRepository implements ArticleRepository {
     return this.prisma.$transaction(async (transaction) => {
       const article = await transaction.article.findUnique({
         where: { id },
-        select: { title: true, content: true },
+        select: {
+          title: true,
+          content: true,
+          coverMediaId: true,
+          coverMedia: { select: { altText: true } },
+        },
       });
 
-      if (!article?.title.trim() || !hasPublishableContent(contentToRecord(article.content))) {
+      if (
+        !article?.title.trim() ||
+        !hasPublishableContent(contentToRecord(article.content)) ||
+        hasImagesMissingAltText(article.content) ||
+        (article.coverMediaId && !article.coverMedia?.altText.trim())
+      ) {
         return null;
       }
 

@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
-import { FileText, Home, Menu, Settings } from "lucide-react";
+import { FileText, Home, Image as ImageIcon, Menu, Settings } from "lucide-react";
 
 import { requireAdminSession } from "../../../modules/auth/public";
 
@@ -18,6 +18,10 @@ function AdminNavigation() {
       <Link href="/admin/articles">
         <FileText size={18} />
         <span>文章</span>
+      </Link>
+      <Link href="/admin/media">
+        <ImageIcon size={18} />
+        <span>媒体库</span>
       </Link>
     </nav>
   );
