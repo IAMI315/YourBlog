@@ -40,6 +40,7 @@ export type WebProjectRecord = {
   publishedAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
+  currentVersionId: string | null;
 };
 
 export type WebProjectVersionRecord = {
@@ -55,4 +56,24 @@ export type WebProjectVersionRecord = {
   validation: unknown;
   createdAt: Date;
   publishedAt: Date | null;
+};
+
+export type WebProjectAdminSummary = {
+  id: string;
+  title: string;
+  slug: string;
+  summary: string;
+  status: "DRAFT" | "PUBLISHED";
+  stableUrl: string | null;
+  publishedAt: Date | null;
+  currentVersion: number | null;
+};
+
+export type WebProjectPublicSummary = {
+  id: string;
+  title: string;
+  slug: string;
+  summary: string;
+  stableUrl: string;
+  publishedAt: Date;
 };
