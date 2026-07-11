@@ -14,15 +14,24 @@ describe("production proxy and compose configuration", () => {
     const nextConfig = await file("next.config.ts");
     const packageJson = JSON.parse(await file("package.json"));
 
-    expect(dockerfile).toContain("ca-certificates openssl");
+    expect(dockerfile).toContain("FROM node:24.18-bookworm-slim AS node-runtime");
+    expect(dockerfile).toContain("strip --strip-unneeded /usr/local/bin/node");
+    expect(dockerfile).toContain("FROM gcr.io/distroless/base-debian12:nonroot AS runner");
+    expect(dockerfile).toContain("COPY --from=node-runtime /usr/local/bin/node /usr/local/bin/node");
+    expect(dockerfile).toContain("libstdc++.so.6");
+    expect(dockerfile).toContain("libgcc_s.so.1");
+    expect(dockerfile).toContain("LD_LIBRARY_PATH");
+    expect(dockerfile).toContain("@img+sharp-libvips-linux-x64@1.3.2");
     expect(dockerfile).toContain(".next/standalone");
-    expect(dockerfile).toContain("node server.js");
+    expect(dockerfile).toContain("ENTRYPOINT [\"/usr/local/bin/node\"]");
+    expect(dockerfile).toContain("CMD [\"scripts/start-production.mjs\"]");
     expect(dockerfile).toContain("ENV HOSTNAME=0.0.0.0");
     expect(dockerfile).toContain("ENV PORT=3000");
     expect(dockerfile).not.toContain("pnpm install --prod");
     expect(dockerfile).toContain("scripts/apply-migrations.mjs");
-    expect(dockerfile).toContain("node scripts/apply-migrations.mjs");
+    expect(dockerfile).toContain("scripts/start-production.mjs");
     expect(dockerfile).not.toContain("pnpm exec prisma migrate deploy");
+    expect(dockerfile).not.toContain('CMD ["sh"');
     expect(nextConfig).toContain('output: "standalone"');
     expect(packageJson.dependencies.prisma).toBeUndefined();
     expect(packageJson.devDependencies.prisma).toBeDefined();
@@ -44,6 +53,8 @@ describe("production proxy and compose configuration", () => {
     expect(compose).toContain("${HTTPS_PORT:-443}:443");
     expect(compose).toContain("image: tech-notes-blog-app");
     expect(compose).not.toContain("mcr.microsoft.com/powershell");
+    expect(compose).not.toContain('command: ["sh"');
+    expect(compose).toContain('"/usr/local/bin/node"');
     expect(compose).toMatch(/labs-data:\/app\/data\/web-projects(?::rw)?/);
     expect(compose).toContain("labs-data:/usr/share/nginx/html:ro");
     expect(compose.match(/healthcheck:/g)).toHaveLength(5);

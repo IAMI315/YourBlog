@@ -30,15 +30,18 @@ describe("ensure-admin-password startup script", () => {
   });
 
   it("wires the startup script into Docker without logging the plaintext password", async () => {
-    const [dockerfile, compose, envExample, script] = await Promise.all([
+    const [dockerfile, compose, envExample, script, startScript] = await Promise.all([
       readFile(resolve(ROOT, "Dockerfile"), "utf8"),
       readFile(resolve(ROOT, "compose.yaml"), "utf8"),
       readFile(resolve(ROOT, ".env.example"), "utf8"),
       readFile(resolve(ROOT, "scripts/ensure-admin-password.mjs"), "utf8"),
+      readFile(resolve(ROOT, "scripts/start-production.mjs"), "utf8"),
     ]);
 
     expect(dockerfile).toContain("scripts/ensure-admin-password.mjs");
-    expect(dockerfile).toContain("node scripts/ensure-admin-password.mjs");
+    expect(dockerfile).toContain("scripts/start-production.mjs");
+    expect(startScript).toContain("ensureAdminPassword");
+    expect(startScript).toContain("readConfiguredAdminPassword");
     expect(compose).toContain("ADMIN_PASSWORD: ${ADMIN_PASSWORD:-YourNoteadmin}");
     expect(envExample).toContain("ADMIN_PASSWORD=YourNoteadmin");
     expect(script).toContain('DELETE FROM "Session"');
