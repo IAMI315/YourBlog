@@ -38,7 +38,9 @@ export interface ArticleService {
 export type ArticleSummary = Pick<
   StoredArticle,
   "id" | "title" | "slug" | "summary" | "publishedAt"
->;
+> & {
+  coverMediaStorageKey?: string | null;
+};
 
 export type ArticleAdminSummary = Pick<
   StoredArticle,
@@ -68,6 +70,7 @@ export type ArticleAdminListOptions = {
 export interface ArticleQueryService {
   findPublishedBySlug(slug: string): Promise<StoredArticle | null>;
   listPublished(): Promise<ArticleSummary[]>;
+  searchPublished(query: string): Promise<ArticleSummary[]>;
   listForAdmin(options?: ArticleAdminListOptions): Promise<ArticleAdminSummary[]>;
   findForEditor(id: string): Promise<ArticleEditorRecord | null>;
   listRevisions(articleId: string): Promise<ArticleRevisionSummary[]>;

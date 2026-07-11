@@ -13,6 +13,9 @@ export function createArticleQueryService({ repository }: QueryDependencies): Ar
     listPublished() {
       return repository.listPublished();
     },
+    searchPublished(query: string) {
+      return repository.searchPublished(query);
+    },
     listForAdmin(options) {
       return repository.listForAdmin(options);
     },

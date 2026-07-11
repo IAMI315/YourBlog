@@ -8,6 +8,7 @@ import {
 import type {
   ArticleAdminListOptions,
   ArticleRevisionSnapshot,
+  ArticleSummary,
   StoredArticle,
 } from "../domain/article";
 import type { ArticleRepository, SaveDraftRecord } from "../ports/article-repository";
@@ -41,6 +42,15 @@ type PrismaRevisionRow = {
   categoryId: string | null;
   tagIds: string[];
   createdAt?: Date;
+};
+
+type PrismaArticleSummaryRow = {
+  id: string;
+  title: string;
+  slug: string;
+  summary: string;
+  publishedAt: Date | null;
+  coverMedia?: { storageKey: string } | null;
 };
 
 function contentToRecord(content: unknown): Record<string, unknown> {
@@ -87,6 +97,17 @@ function revisionToSnapshot(row: PrismaRevisionRow): ArticleRevisionSnapshot {
     publishedAt: null,
     deletedAt: null,
     revision: row.revision,
+  };
+}
+
+function toArticleSummary(row: PrismaArticleSummaryRow): ArticleSummary {
+  return {
+    id: row.id,
+    title: row.title,
+    slug: row.slug,
+    summary: row.summary,
+    publishedAt: row.publishedAt,
+    coverMediaStorageKey: row.coverMedia?.storageKey ?? null,
   };
 }
 
@@ -292,11 +313,66 @@ export class PrismaArticleRepository implements ArticleRepository {
   }
 
   async listPublished() {
-    return this.prisma.article.findMany({
+    const articles = await this.prisma.article.findMany({
       where: { status: "PUBLISHED", deletedAt: null },
       orderBy: { publishedAt: "desc" },
-      select: { id: true, title: true, slug: true, summary: true, publishedAt: true },
+      select: {
+        id: true,
+        title: true,
+        slug: true,
+        summary: true,
+        publishedAt: true,
+        coverMedia: { select: { storageKey: true } },
+      },
     });
+
+    return articles.map(toArticleSummary);
+  }
+
+  async searchPublished(query: string) {
+    const trimmedQuery = query.trim();
+    if (!trimmedQuery) return [];
+
+    const fullTextMatches = await this.prisma.$queryRaw<Array<{ id: string }>>`
+      SELECT id
+      FROM "Article"
+      WHERE status = 'PUBLISHED'
+        AND "deletedAt" IS NULL
+        AND to_tsvector('simple', coalesce(title, '') || ' ' || coalesce(summary, ''))
+          @@ plainto_tsquery('simple', ${trimmedQuery})
+      ORDER BY "publishedAt" DESC NULLS LAST
+      LIMIT 50
+    `;
+    const fallbackMatches = await this.prisma.article.findMany({
+      where: {
+        status: "PUBLISHED",
+        deletedAt: null,
+        OR: [
+          { title: { contains: trimmedQuery, mode: "insensitive" } },
+          { summary: { contains: trimmedQuery, mode: "insensitive" } },
+        ],
+      },
+      orderBy: { publishedAt: "desc" },
+      select: { id: true },
+      take: 50,
+    });
+    const ids = Array.from(new Set([...fullTextMatches, ...fallbackMatches].map((match) => match.id)));
+    if (ids.length === 0) return [];
+
+    const articles = await this.prisma.article.findMany({
+      where: { id: { in: ids }, status: "PUBLISHED", deletedAt: null },
+      orderBy: { publishedAt: "desc" },
+      select: {
+        id: true,
+        title: true,
+        slug: true,
+        summary: true,
+        publishedAt: true,
+        coverMedia: { select: { storageKey: true } },
+      },
+    });
+
+    return articles.map(toArticleSummary);
   }
 
   async listForAdmin(options: ArticleAdminListOptions = {}) {

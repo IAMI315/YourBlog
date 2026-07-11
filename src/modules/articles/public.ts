@@ -8,6 +8,7 @@ import { publishArticle as publishArticleWithRepository } from "./application/pu
 import { createArticleQueryService } from "./application/query-articles";
 import { recycleArticle, recoverArticle } from "./application/recycle-article";
 import { restoreRevision as restoreRevisionWithRepository } from "./application/restore-revision";
+import { searchArticles as searchArticlesWithRepository } from "./application/search-articles";
 import { PrismaArticleRepository } from "./adapters/prisma-article-repository";
 import type { ArticleDraftInput, ArticleService } from "./domain/article";
 
@@ -21,6 +22,8 @@ export const articleService: ArticleService = {
   async publish(id: string) {
     const result = await publishArticleWithRepository({ repository, clock }, id);
     revalidatePath("/");
+    revalidatePath("/archive");
+    revalidatePath("/tutorials");
     revalidatePath(`/tutorials/${result.slug}`);
     return result;
   },
@@ -36,6 +39,10 @@ export const articleService: ArticleService = {
 };
 
 export const articleQueries = createArticleQueryService({ repository });
+
+export function searchArticles(query: string) {
+  return searchArticlesWithRepository({ repository }, query);
+}
 
 export type {
   ArticleDraftInput,

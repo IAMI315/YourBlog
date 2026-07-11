@@ -4,6 +4,7 @@ import type {
   ArticleAdminSummary,
   ArticleEditorRecord,
   ArticleRevisionSummary,
+  ArticleSummary,
 } from "../domain/article";
 
 export type SaveDraftRecord = Omit<StoredArticle, "id" | "status" | "publishedAt" | "deletedAt"> & {
@@ -20,7 +21,8 @@ export interface ArticleRepository {
   markDeleted(id: string, deletedAt: Date): Promise<void>;
   recover(id: string): Promise<void>;
   findPublishedBySlug(slug: string): Promise<StoredArticle | null>;
-  listPublished(): Promise<Array<Pick<StoredArticle, "id" | "title" | "slug" | "summary" | "publishedAt">>>;
+  listPublished(): Promise<ArticleSummary[]>;
+  searchPublished(query: string): Promise<ArticleSummary[]>;
   listForAdmin(options?: ArticleAdminListOptions): Promise<ArticleAdminSummary[]>;
   findForEditor(id: string): Promise<ArticleEditorRecord | null>;
   listRevisions(articleId: string): Promise<ArticleRevisionSummary[]>;

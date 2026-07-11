@@ -117,6 +117,14 @@ class InMemoryArticleRepository implements ArticleRepository {
       }));
   }
 
+  async searchPublished(query: string) {
+    const normalizedQuery = query.toLocaleLowerCase();
+
+    return (await this.listPublished()).filter((article) =>
+      `${article.title} ${article.summary}`.toLocaleLowerCase().includes(normalizedQuery),
+    );
+  }
+
   async listForAdmin() {
     return Array.from(this.articles.values()).map((article) => ({
       id: article.id,
