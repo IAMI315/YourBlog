@@ -22,6 +22,7 @@ type ArticleEditorProps = {
   initialValue: Record<string, unknown>;
   contentFieldName?: string;
   publishAction?: () => Promise<void>;
+  showPublishButton?: boolean;
   saveAsNewDraftAction?: (input: {
     articleId: string;
     value: Record<string, unknown>;
@@ -62,13 +63,13 @@ const VideoNode = Node.create({
 
 function blockForCommand(command: SlashCommand) {
   if (command.type === "codeBlock") return { type: "codeBlock", content: [{ type: "text", text: "" }] };
-  if (command.type === "heading") return { type: "heading", attrs: { level: 2 }, content: [{ type: "text", text: "Heading" }] };
+  if (command.type === "heading") return { type: "heading", attrs: { level: 2 }, content: [{ type: "text", text: "标题" }] };
   if (command.type === "bulletList") {
     return { type: "bulletList", content: [{ type: "listItem", content: [{ type: "paragraph" }] }] };
   }
   if (command.type === "blockquote") return { type: "blockquote", content: [{ type: "paragraph" }] };
   if (command.type === "image") return { type: "image", attrs: { src: "", alt: "" } };
-  if (command.type === "callout") return { type: "callout", content: [{ type: "text", text: "Callout" }] };
+  if (command.type === "callout") return { type: "callout", content: [{ type: "text", text: "提示内容" }] };
   if (command.type === "table") {
     return {
       type: "table",
@@ -84,7 +85,7 @@ function blockForCommand(command: SlashCommand) {
     };
   }
   if (command.type === "horizontalRule") return { type: "horizontalRule" };
-  if (command.type === "link") return { type: "paragraph", content: [{ type: "text", marks: [{ type: "link", attrs: { href: "https://example.com" } }], text: "Link" }] };
+  if (command.type === "link") return { type: "paragraph", content: [{ type: "text", marks: [{ type: "link", attrs: { href: "https://example.com" } }], text: "链接" }] };
   if (command.type === "video") return { type: "video", attrs: { src: "" } };
   return { type: "paragraph" };
 }
@@ -114,6 +115,7 @@ export function ArticleEditor({
   publishAction,
   saveAsNewDraftAction,
   save,
+  showPublishButton = true,
 }: ArticleEditorProps) {
   const [value, setValue] = useState(initialValue);
   const [activeType, setActiveType] = useState("paragraph");
@@ -139,7 +141,7 @@ export function ArticleEditor({
     content: initialValue,
     editorProps: {
       attributes: {
-        "aria-label": "Article content",
+        "aria-label": "文章内容",
         class: "article-editor__textbox",
         role: "textbox",
       },
@@ -171,12 +173,12 @@ export function ArticleEditor({
   return (
     <section className="article-editor">
       <EditorToolbar activeType={activeType} onSelect={insertCommand} />
-      <div className="article-editor__drag-actions" aria-label="Block ordering">
+      <div className="article-editor__drag-actions" aria-label="块排序">
         <button onClick={() => reorder(-1)} type="button">
-          Move block up
+          上移块
         </button>
         <button onClick={() => reorder(1)} type="button">
-          Move block down
+          下移块
         </button>
       </div>
       <div
@@ -217,9 +219,9 @@ export function ArticleEditor({
         {status === "unsynced" ? "\u5c1a\u672a\u540c\u6b65" : null}
         {status === "conflict" ? (
           <>
-            <span>REVISION_CONFLICT</span>
+            <span>修订冲突</span>
             <button onClick={() => window.location.reload()} type="button">
-              Reload
+              重新加载
             </button>
             <button
               disabled={!saveAsNewDraftAction || isSavingConflictDraft}
@@ -231,20 +233,20 @@ export function ArticleEditor({
               }}
               type="button"
             >
-              Save as new draft
+              另存为新草稿
             </button>
           </>
         ) : null}
       </div>
-      {publishAction ? (
+      {showPublishButton && publishAction ? (
         <button className="button" disabled={isSaving} formAction={publishAction} type="submit">
-          Publish
+          发布
         </button>
-      ) : (
-        <button disabled={isSaving} type="button">
-          Publish
+      ) : showPublishButton ? (
+        <button className="button" disabled={isSaving} type="button">
+          发布
         </button>
-      )}
+      ) : null}
       <script data-testid="article-json" type="application/json">
         {serializedValue}
       </script>

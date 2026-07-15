@@ -21,7 +21,7 @@ const iconByType: Record<string, React.ReactNode> = {
 
 export function EditorToolbar({ activeType, onSelect }: EditorToolbarProps) {
   return (
-    <div className="editor-toolbar" aria-label="Editor toolbar">
+    <div className="editor-toolbar" aria-label="编辑器工具栏">
       {slashCommands.slice(0, 9).map((command) => (
         <button
           aria-label={command.label}

@@ -8,7 +8,16 @@
 		X-Content-Type-Options nosniff
 		Referrer-Policy strict-origin-when-cross-origin
 	}
-	reverse_proxy app:3000
+
+	handle /projects/* {
+		reverse_proxy labs:8080 {
+			header_down -Set-Cookie
+		}
+	}
+
+	handle {
+		reverse_proxy app:3000
+	}
 }
 
 {$LABS_HOST} {

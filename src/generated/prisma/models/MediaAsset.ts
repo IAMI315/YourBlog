@@ -265,6 +265,7 @@ export type MediaAssetWhereInput = {
   altText?: Prisma.StringFilter<"MediaAsset"> | string
   createdAt?: Prisma.DateTimeFilter<"MediaAsset"> | Date | string
   articleCovers?: Prisma.ArticleListRelationFilter
+  pageCovers?: Prisma.PageListRelationFilter
   projectCovers?: Prisma.WebProjectListRelationFilter
   siteAvatars?: Prisma.SiteSettingsListRelationFilter
 }
@@ -281,6 +282,7 @@ export type MediaAssetOrderByWithRelationInput = {
   altText?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   articleCovers?: Prisma.ArticleOrderByRelationAggregateInput
+  pageCovers?: Prisma.PageOrderByRelationAggregateInput
   projectCovers?: Prisma.WebProjectOrderByRelationAggregateInput
   siteAvatars?: Prisma.SiteSettingsOrderByRelationAggregateInput
 }
@@ -300,6 +302,7 @@ export type MediaAssetWhereUniqueInput = Prisma.AtLeast<{
   altText?: Prisma.StringFilter<"MediaAsset"> | string
   createdAt?: Prisma.DateTimeFilter<"MediaAsset"> | Date | string
   articleCovers?: Prisma.ArticleListRelationFilter
+  pageCovers?: Prisma.PageListRelationFilter
   projectCovers?: Prisma.WebProjectListRelationFilter
   siteAvatars?: Prisma.SiteSettingsListRelationFilter
 }, "id" | "storageKey">
@@ -350,6 +353,7 @@ export type MediaAssetCreateInput = {
   altText?: string
   createdAt?: Date | string
   articleCovers?: Prisma.ArticleCreateNestedManyWithoutCoverMediaInput
+  pageCovers?: Prisma.PageCreateNestedManyWithoutCoverMediaInput
   projectCovers?: Prisma.WebProjectCreateNestedManyWithoutCoverMediaInput
   siteAvatars?: Prisma.SiteSettingsCreateNestedManyWithoutAvatarMediaInput
 }
@@ -366,6 +370,7 @@ export type MediaAssetUncheckedCreateInput = {
   altText?: string
   createdAt?: Date | string
   articleCovers?: Prisma.ArticleUncheckedCreateNestedManyWithoutCoverMediaInput
+  pageCovers?: Prisma.PageUncheckedCreateNestedManyWithoutCoverMediaInput
   projectCovers?: Prisma.WebProjectUncheckedCreateNestedManyWithoutCoverMediaInput
   siteAvatars?: Prisma.SiteSettingsUncheckedCreateNestedManyWithoutAvatarMediaInput
 }
@@ -382,6 +387,7 @@ export type MediaAssetUpdateInput = {
   altText?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   articleCovers?: Prisma.ArticleUpdateManyWithoutCoverMediaNestedInput
+  pageCovers?: Prisma.PageUpdateManyWithoutCoverMediaNestedInput
   projectCovers?: Prisma.WebProjectUpdateManyWithoutCoverMediaNestedInput
   siteAvatars?: Prisma.SiteSettingsUpdateManyWithoutAvatarMediaNestedInput
 }
@@ -398,6 +404,7 @@ export type MediaAssetUncheckedUpdateInput = {
   altText?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   articleCovers?: Prisma.ArticleUncheckedUpdateManyWithoutCoverMediaNestedInput
+  pageCovers?: Prisma.PageUncheckedUpdateManyWithoutCoverMediaNestedInput
   projectCovers?: Prisma.WebProjectUncheckedUpdateManyWithoutCoverMediaNestedInput
   siteAvatars?: Prisma.SiteSettingsUncheckedUpdateManyWithoutAvatarMediaNestedInput
 }
@@ -561,6 +568,22 @@ export type MediaAssetUpdateOneWithoutSiteAvatarsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.MediaAssetUpdateToOneWithWhereWithoutSiteAvatarsInput, Prisma.MediaAssetUpdateWithoutSiteAvatarsInput>, Prisma.MediaAssetUncheckedUpdateWithoutSiteAvatarsInput>
 }
 
+export type MediaAssetCreateNestedOneWithoutPageCoversInput = {
+  create?: Prisma.XOR<Prisma.MediaAssetCreateWithoutPageCoversInput, Prisma.MediaAssetUncheckedCreateWithoutPageCoversInput>
+  connectOrCreate?: Prisma.MediaAssetCreateOrConnectWithoutPageCoversInput
+  connect?: Prisma.MediaAssetWhereUniqueInput
+}
+
+export type MediaAssetUpdateOneWithoutPageCoversNestedInput = {
+  create?: Prisma.XOR<Prisma.MediaAssetCreateWithoutPageCoversInput, Prisma.MediaAssetUncheckedCreateWithoutPageCoversInput>
+  connectOrCreate?: Prisma.MediaAssetCreateOrConnectWithoutPageCoversInput
+  upsert?: Prisma.MediaAssetUpsertWithoutPageCoversInput
+  disconnect?: Prisma.MediaAssetWhereInput | boolean
+  delete?: Prisma.MediaAssetWhereInput | boolean
+  connect?: Prisma.MediaAssetWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.MediaAssetUpdateToOneWithWhereWithoutPageCoversInput, Prisma.MediaAssetUpdateWithoutPageCoversInput>, Prisma.MediaAssetUncheckedUpdateWithoutPageCoversInput>
+}
+
 export type MediaAssetCreateWithoutArticleCoversInput = {
   id?: string
   originalName: string
@@ -572,6 +595,7 @@ export type MediaAssetCreateWithoutArticleCoversInput = {
   checksum: string
   altText?: string
   createdAt?: Date | string
+  pageCovers?: Prisma.PageCreateNestedManyWithoutCoverMediaInput
   projectCovers?: Prisma.WebProjectCreateNestedManyWithoutCoverMediaInput
   siteAvatars?: Prisma.SiteSettingsCreateNestedManyWithoutAvatarMediaInput
 }
@@ -587,6 +611,7 @@ export type MediaAssetUncheckedCreateWithoutArticleCoversInput = {
   checksum: string
   altText?: string
   createdAt?: Date | string
+  pageCovers?: Prisma.PageUncheckedCreateNestedManyWithoutCoverMediaInput
   projectCovers?: Prisma.WebProjectUncheckedCreateNestedManyWithoutCoverMediaInput
   siteAvatars?: Prisma.SiteSettingsUncheckedCreateNestedManyWithoutAvatarMediaInput
 }
@@ -618,6 +643,7 @@ export type MediaAssetUpdateWithoutArticleCoversInput = {
   checksum?: Prisma.StringFieldUpdateOperationsInput | string
   altText?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  pageCovers?: Prisma.PageUpdateManyWithoutCoverMediaNestedInput
   projectCovers?: Prisma.WebProjectUpdateManyWithoutCoverMediaNestedInput
   siteAvatars?: Prisma.SiteSettingsUpdateManyWithoutAvatarMediaNestedInput
 }
@@ -633,6 +659,7 @@ export type MediaAssetUncheckedUpdateWithoutArticleCoversInput = {
   checksum?: Prisma.StringFieldUpdateOperationsInput | string
   altText?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  pageCovers?: Prisma.PageUncheckedUpdateManyWithoutCoverMediaNestedInput
   projectCovers?: Prisma.WebProjectUncheckedUpdateManyWithoutCoverMediaNestedInput
   siteAvatars?: Prisma.SiteSettingsUncheckedUpdateManyWithoutAvatarMediaNestedInput
 }
@@ -649,6 +676,7 @@ export type MediaAssetCreateWithoutProjectCoversInput = {
   altText?: string
   createdAt?: Date | string
   articleCovers?: Prisma.ArticleCreateNestedManyWithoutCoverMediaInput
+  pageCovers?: Prisma.PageCreateNestedManyWithoutCoverMediaInput
   siteAvatars?: Prisma.SiteSettingsCreateNestedManyWithoutAvatarMediaInput
 }
 
@@ -664,6 +692,7 @@ export type MediaAssetUncheckedCreateWithoutProjectCoversInput = {
   altText?: string
   createdAt?: Date | string
   articleCovers?: Prisma.ArticleUncheckedCreateNestedManyWithoutCoverMediaInput
+  pageCovers?: Prisma.PageUncheckedCreateNestedManyWithoutCoverMediaInput
   siteAvatars?: Prisma.SiteSettingsUncheckedCreateNestedManyWithoutAvatarMediaInput
 }
 
@@ -695,6 +724,7 @@ export type MediaAssetUpdateWithoutProjectCoversInput = {
   altText?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   articleCovers?: Prisma.ArticleUpdateManyWithoutCoverMediaNestedInput
+  pageCovers?: Prisma.PageUpdateManyWithoutCoverMediaNestedInput
   siteAvatars?: Prisma.SiteSettingsUpdateManyWithoutAvatarMediaNestedInput
 }
 
@@ -710,6 +740,7 @@ export type MediaAssetUncheckedUpdateWithoutProjectCoversInput = {
   altText?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   articleCovers?: Prisma.ArticleUncheckedUpdateManyWithoutCoverMediaNestedInput
+  pageCovers?: Prisma.PageUncheckedUpdateManyWithoutCoverMediaNestedInput
   siteAvatars?: Prisma.SiteSettingsUncheckedUpdateManyWithoutAvatarMediaNestedInput
 }
 
@@ -725,6 +756,7 @@ export type MediaAssetCreateWithoutSiteAvatarsInput = {
   altText?: string
   createdAt?: Date | string
   articleCovers?: Prisma.ArticleCreateNestedManyWithoutCoverMediaInput
+  pageCovers?: Prisma.PageCreateNestedManyWithoutCoverMediaInput
   projectCovers?: Prisma.WebProjectCreateNestedManyWithoutCoverMediaInput
 }
 
@@ -740,6 +772,7 @@ export type MediaAssetUncheckedCreateWithoutSiteAvatarsInput = {
   altText?: string
   createdAt?: Date | string
   articleCovers?: Prisma.ArticleUncheckedCreateNestedManyWithoutCoverMediaInput
+  pageCovers?: Prisma.PageUncheckedCreateNestedManyWithoutCoverMediaInput
   projectCovers?: Prisma.WebProjectUncheckedCreateNestedManyWithoutCoverMediaInput
 }
 
@@ -771,6 +804,7 @@ export type MediaAssetUpdateWithoutSiteAvatarsInput = {
   altText?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   articleCovers?: Prisma.ArticleUpdateManyWithoutCoverMediaNestedInput
+  pageCovers?: Prisma.PageUpdateManyWithoutCoverMediaNestedInput
   projectCovers?: Prisma.WebProjectUpdateManyWithoutCoverMediaNestedInput
 }
 
@@ -786,7 +820,88 @@ export type MediaAssetUncheckedUpdateWithoutSiteAvatarsInput = {
   altText?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   articleCovers?: Prisma.ArticleUncheckedUpdateManyWithoutCoverMediaNestedInput
+  pageCovers?: Prisma.PageUncheckedUpdateManyWithoutCoverMediaNestedInput
   projectCovers?: Prisma.WebProjectUncheckedUpdateManyWithoutCoverMediaNestedInput
+}
+
+export type MediaAssetCreateWithoutPageCoversInput = {
+  id?: string
+  originalName: string
+  storageKey: string
+  mimeType: string
+  width?: number | null
+  height?: number | null
+  byteSize: bigint | number
+  checksum: string
+  altText?: string
+  createdAt?: Date | string
+  articleCovers?: Prisma.ArticleCreateNestedManyWithoutCoverMediaInput
+  projectCovers?: Prisma.WebProjectCreateNestedManyWithoutCoverMediaInput
+  siteAvatars?: Prisma.SiteSettingsCreateNestedManyWithoutAvatarMediaInput
+}
+
+export type MediaAssetUncheckedCreateWithoutPageCoversInput = {
+  id?: string
+  originalName: string
+  storageKey: string
+  mimeType: string
+  width?: number | null
+  height?: number | null
+  byteSize: bigint | number
+  checksum: string
+  altText?: string
+  createdAt?: Date | string
+  articleCovers?: Prisma.ArticleUncheckedCreateNestedManyWithoutCoverMediaInput
+  projectCovers?: Prisma.WebProjectUncheckedCreateNestedManyWithoutCoverMediaInput
+  siteAvatars?: Prisma.SiteSettingsUncheckedCreateNestedManyWithoutAvatarMediaInput
+}
+
+export type MediaAssetCreateOrConnectWithoutPageCoversInput = {
+  where: Prisma.MediaAssetWhereUniqueInput
+  create: Prisma.XOR<Prisma.MediaAssetCreateWithoutPageCoversInput, Prisma.MediaAssetUncheckedCreateWithoutPageCoversInput>
+}
+
+export type MediaAssetUpsertWithoutPageCoversInput = {
+  update: Prisma.XOR<Prisma.MediaAssetUpdateWithoutPageCoversInput, Prisma.MediaAssetUncheckedUpdateWithoutPageCoversInput>
+  create: Prisma.XOR<Prisma.MediaAssetCreateWithoutPageCoversInput, Prisma.MediaAssetUncheckedCreateWithoutPageCoversInput>
+  where?: Prisma.MediaAssetWhereInput
+}
+
+export type MediaAssetUpdateToOneWithWhereWithoutPageCoversInput = {
+  where?: Prisma.MediaAssetWhereInput
+  data: Prisma.XOR<Prisma.MediaAssetUpdateWithoutPageCoversInput, Prisma.MediaAssetUncheckedUpdateWithoutPageCoversInput>
+}
+
+export type MediaAssetUpdateWithoutPageCoversInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  originalName?: Prisma.StringFieldUpdateOperationsInput | string
+  storageKey?: Prisma.StringFieldUpdateOperationsInput | string
+  mimeType?: Prisma.StringFieldUpdateOperationsInput | string
+  width?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  height?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  byteSize?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  checksum?: Prisma.StringFieldUpdateOperationsInput | string
+  altText?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  articleCovers?: Prisma.ArticleUpdateManyWithoutCoverMediaNestedInput
+  projectCovers?: Prisma.WebProjectUpdateManyWithoutCoverMediaNestedInput
+  siteAvatars?: Prisma.SiteSettingsUpdateManyWithoutAvatarMediaNestedInput
+}
+
+export type MediaAssetUncheckedUpdateWithoutPageCoversInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  originalName?: Prisma.StringFieldUpdateOperationsInput | string
+  storageKey?: Prisma.StringFieldUpdateOperationsInput | string
+  mimeType?: Prisma.StringFieldUpdateOperationsInput | string
+  width?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  height?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  byteSize?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  checksum?: Prisma.StringFieldUpdateOperationsInput | string
+  altText?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  articleCovers?: Prisma.ArticleUncheckedUpdateManyWithoutCoverMediaNestedInput
+  projectCovers?: Prisma.WebProjectUncheckedUpdateManyWithoutCoverMediaNestedInput
+  siteAvatars?: Prisma.SiteSettingsUncheckedUpdateManyWithoutAvatarMediaNestedInput
 }
 
 
@@ -796,12 +911,14 @@ export type MediaAssetUncheckedUpdateWithoutSiteAvatarsInput = {
 
 export type MediaAssetCountOutputType = {
   articleCovers: number
+  pageCovers: number
   projectCovers: number
   siteAvatars: number
 }
 
 export type MediaAssetCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   articleCovers?: boolean | MediaAssetCountOutputTypeCountArticleCoversArgs
+  pageCovers?: boolean | MediaAssetCountOutputTypeCountPageCoversArgs
   projectCovers?: boolean | MediaAssetCountOutputTypeCountProjectCoversArgs
   siteAvatars?: boolean | MediaAssetCountOutputTypeCountSiteAvatarsArgs
 }
@@ -821,6 +938,13 @@ export type MediaAssetCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.E
  */
 export type MediaAssetCountOutputTypeCountArticleCoversArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.ArticleWhereInput
+}
+
+/**
+ * MediaAssetCountOutputType without action
+ */
+export type MediaAssetCountOutputTypeCountPageCoversArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PageWhereInput
 }
 
 /**
@@ -850,6 +974,7 @@ export type MediaAssetSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
   altText?: boolean
   createdAt?: boolean
   articleCovers?: boolean | Prisma.MediaAsset$articleCoversArgs<ExtArgs>
+  pageCovers?: boolean | Prisma.MediaAsset$pageCoversArgs<ExtArgs>
   projectCovers?: boolean | Prisma.MediaAsset$projectCoversArgs<ExtArgs>
   siteAvatars?: boolean | Prisma.MediaAsset$siteAvatarsArgs<ExtArgs>
   _count?: boolean | Prisma.MediaAssetCountOutputTypeDefaultArgs<ExtArgs>
@@ -897,6 +1022,7 @@ export type MediaAssetSelectScalar = {
 export type MediaAssetOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "originalName" | "storageKey" | "mimeType" | "width" | "height" | "byteSize" | "checksum" | "altText" | "createdAt", ExtArgs["result"]["mediaAsset"]>
 export type MediaAssetInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   articleCovers?: boolean | Prisma.MediaAsset$articleCoversArgs<ExtArgs>
+  pageCovers?: boolean | Prisma.MediaAsset$pageCoversArgs<ExtArgs>
   projectCovers?: boolean | Prisma.MediaAsset$projectCoversArgs<ExtArgs>
   siteAvatars?: boolean | Prisma.MediaAsset$siteAvatarsArgs<ExtArgs>
   _count?: boolean | Prisma.MediaAssetCountOutputTypeDefaultArgs<ExtArgs>
@@ -908,6 +1034,7 @@ export type $MediaAssetPayload<ExtArgs extends runtime.Types.Extensions.Internal
   name: "MediaAsset"
   objects: {
     articleCovers: Prisma.$ArticlePayload<ExtArgs>[]
+    pageCovers: Prisma.$PagePayload<ExtArgs>[]
     projectCovers: Prisma.$WebProjectPayload<ExtArgs>[]
     siteAvatars: Prisma.$SiteSettingsPayload<ExtArgs>[]
   }
@@ -1317,6 +1444,7 @@ readonly fields: MediaAssetFieldRefs;
 export interface Prisma__MediaAssetClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   articleCovers<T extends Prisma.MediaAsset$articleCoversArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MediaAsset$articleCoversArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ArticlePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  pageCovers<T extends Prisma.MediaAsset$pageCoversArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MediaAsset$pageCoversArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   projectCovers<T extends Prisma.MediaAsset$projectCoversArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MediaAsset$projectCoversArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WebProjectPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   siteAvatars<T extends Prisma.MediaAsset$siteAvatarsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MediaAsset$siteAvatarsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SiteSettingsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
@@ -1772,6 +1900,30 @@ export type MediaAsset$articleCoversArgs<ExtArgs extends runtime.Types.Extension
   take?: number
   skip?: number
   distinct?: Prisma.ArticleScalarFieldEnum | Prisma.ArticleScalarFieldEnum[]
+}
+
+/**
+ * MediaAsset.pageCovers
+ */
+export type MediaAsset$pageCoversArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Page
+   */
+  select?: Prisma.PageSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Page
+   */
+  omit?: Prisma.PageOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PageInclude<ExtArgs> | null
+  where?: Prisma.PageWhereInput
+  orderBy?: Prisma.PageOrderByWithRelationInput | Prisma.PageOrderByWithRelationInput[]
+  cursor?: Prisma.PageWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.PageScalarFieldEnum | Prisma.PageScalarFieldEnum[]
 }
 
 /**

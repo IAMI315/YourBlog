@@ -7,6 +7,7 @@ import {
   Home,
   Image as ImageIcon,
   Menu,
+  Paintbrush,
   Settings,
 } from "lucide-react";
 
@@ -14,7 +15,7 @@ import { requireAdminSession } from "../../../modules/auth/public";
 
 function AdminNavigation() {
   return (
-    <nav className="admin-shell__nav" aria-label="Admin navigation">
+    <nav className="admin-shell__nav" aria-label="管理后台导航">
       <Link href="/admin">
         <Home size={18} />
         <span>概览</span>
@@ -22,6 +23,10 @@ function AdminNavigation() {
       <Link href="/admin/settings">
         <Settings size={18} />
         <span>站点设置</span>
+      </Link>
+      <Link href="/admin/appearance">
+        <Paintbrush size={18} />
+        <span>外观与页面</span>
       </Link>
       <Link href="/admin/articles">
         <FileText size={18} />

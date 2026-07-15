@@ -15,7 +15,7 @@ import type {
   WebProjectRepository,
 } from "../ports/web-project-repository";
 import type { WebProjectStorage } from "../ports/web-project-storage";
-import { publishProject } from "./publish-project";
+import { projectPagePath, publishProject } from "./publish-project";
 import { rollbackProject } from "./rollback-project";
 
 const NOW = new Date("2026-07-11T12:00:00.000Z");
@@ -181,6 +181,7 @@ describe("publishProject", () => {
 
     expect(result.previewUrl).toBe("https://labs.example.test/previews/preview-token/");
     expect(result.stableUrl).toBe("https://labs.example.test/projects/shader-demo/");
+    expect(projectPagePath("shader-demo")).toBe("/projects/shader-demo/");
     expect(result.version).toBe(1);
     expect(storage.published).toEqual([
       "labs/previews/preview-token/->labs/projects/shader-demo/1/",
@@ -194,6 +195,25 @@ describe("publishProject", () => {
       stableUrl: "https://labs.example.test/projects/shader-demo/",
       currentVersionId: repository.versions[0].id,
     });
+  });
+
+  it("preserves an explicitly configured HTTP origin for local project previews", async () => {
+    const repository = new MemoryRepository();
+    const storage = new MemoryStorage();
+
+    const result = await publishProject(
+      { repository, storage, clock: { now: () => NOW }, labsHost: "http://labs.localhost:32124" },
+      {
+        title: "Local Demo",
+        slug: "local-demo",
+        summary: "",
+        staged: staged("local-preview", "checksum-local"),
+        validation: upload("checksum-local"),
+      },
+    );
+
+    expect(result.previewUrl).toBe("http://labs.localhost:32124/previews/local-preview/");
+    expect(result.stableUrl).toBe("http://labs.localhost:32124/projects/local-demo/");
   });
 
   it("preserves the previous stable version when metadata commit fails", async () => {

@@ -18,7 +18,7 @@ export default async function ArticlesPage({ searchParams }: ArticlesPageProps) 
     <section className="admin-section" aria-labelledby="articles-title">
       <div className="admin-section__header">
         <div>
-          <p className="admin-section__eyebrow">Articles</p>
+          <p className="admin-section__eyebrow">内容管理</p>
           <h1 id="articles-title">文章</h1>
         </div>
         <Link className="button" href="/admin/articles/new">
@@ -26,7 +26,7 @@ export default async function ArticlesPage({ searchParams }: ArticlesPageProps) 
           <span>新建文章</span>
         </Link>
       </div>
-      <div className="segmented-control" aria-label="Article list view">
+      <div className="segmented-control" aria-label="文章列表视图">
         <Link aria-current={!isRecycleView} href="/admin/articles">
           全部
         </Link>

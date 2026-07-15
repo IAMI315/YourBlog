@@ -19,12 +19,12 @@ export default async function ArticlePreviewPage({ params, searchParams }: Previ
 
   return (
     <section className="article-preview" aria-labelledby="preview-title">
-      <div className="segmented-control" aria-label="Preview mode">
+      <div className="segmented-control" aria-label="预览模式">
         <a aria-current={mode === "desktop"} href={`/admin/articles/${id}/preview?mode=desktop`}>
-          Desktop
+          桌面
         </a>
         <a aria-current={mode === "mobile"} href={`/admin/articles/${id}/preview?mode=mobile`}>
-          Mobile
+          手机
         </a>
       </div>
       <article className={`article-preview__frame article-preview__frame--${mode}`}>

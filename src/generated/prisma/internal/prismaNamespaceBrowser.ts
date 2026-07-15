@@ -63,6 +63,9 @@ export const ModelName = {
   WebProject: 'WebProject',
   WebProjectVersion: 'WebProjectVersion',
   SiteSettings: 'SiteSettings',
+  AppearanceSettings: 'AppearanceSettings',
+  HomeLayoutSettings: 'HomeLayoutSettings',
+  Page: 'Page',
   BackupRecord: 'BackupRecord'
 } as const
 
@@ -253,6 +256,60 @@ export const SiteSettingsScalarFieldEnum = {
 } as const
 
 export type SiteSettingsScalarFieldEnum = (typeof SiteSettingsScalarFieldEnum)[keyof typeof SiteSettingsScalarFieldEnum]
+
+
+export const AppearanceSettingsScalarFieldEnum = {
+  id: 'id',
+  themePreset: 'themePreset',
+  accentPreset: 'accentPreset',
+  backgroundTone: 'backgroundTone',
+  glassIntensity: 'glassIntensity',
+  radiusScale: 'radiusScale',
+  buttonStyle: 'buttonStyle',
+  headerDensity: 'headerDensity',
+  footerVisible: 'footerVisible',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type AppearanceSettingsScalarFieldEnum = (typeof AppearanceSettingsScalarFieldEnum)[keyof typeof AppearanceSettingsScalarFieldEnum]
+
+
+export const HomeLayoutSettingsScalarFieldEnum = {
+  id: 'id',
+  modules: 'modules',
+  heroTitle: 'heroTitle',
+  heroDescription: 'heroDescription',
+  featuredLabel: 'featuredLabel',
+  labLabel: 'labLabel',
+  labTitle: 'labTitle',
+  labDescription: 'labDescription',
+  archiveLabel: 'archiveLabel',
+  recentArticlesCount: 'recentArticlesCount',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type HomeLayoutSettingsScalarFieldEnum = (typeof HomeLayoutSettingsScalarFieldEnum)[keyof typeof HomeLayoutSettingsScalarFieldEnum]
+
+
+export const PageScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  slug: 'slug',
+  summary: 'summary',
+  content: 'content',
+  status: 'status',
+  showInNavigation: 'showInNavigation',
+  seoTitle: 'seoTitle',
+  seoDescription: 'seoDescription',
+  publishedAt: 'publishedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  coverMediaId: 'coverMediaId'
+} as const
+
+export type PageScalarFieldEnum = (typeof PageScalarFieldEnum)[keyof typeof PageScalarFieldEnum]
 
 
 export const BackupRecordScalarFieldEnum = {

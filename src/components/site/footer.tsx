@@ -9,7 +9,7 @@ export function SiteFooter({ settings }: FooterProps) {
     <footer className="site-footer">
       <p>{settings.authorBio}</p>
       {settings.socialLinks.length > 0 ? (
-        <nav aria-label="Social links">
+        <nav aria-label="社交链接">
           {settings.socialLinks.map((link) => (
             <a href={link.url} key={link.url} rel="noreferrer" target="_blank">
               {link.label}

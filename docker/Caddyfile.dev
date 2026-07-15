@@ -1,0 +1,35 @@
+http://{$BLOG_HOST} {
+	encode zstd gzip
+	header {
+		X-Content-Type-Options nosniff
+		Referrer-Policy strict-origin-when-cross-origin
+	}
+
+	handle /projects/* {
+		reverse_proxy labs:8080 {
+			header_down -Set-Cookie
+		}
+	}
+
+	handle {
+		reverse_proxy host.docker.internal:3000
+	}
+}
+
+http://{$LABS_HOST} {
+	encode zstd gzip
+	header {
+		X-Content-Type-Options nosniff
+		Referrer-Policy no-referrer
+	}
+
+	@previews path /previews/*
+	header @previews Cache-Control "no-store"
+
+	@blocked path /api* /admin*
+	respond @blocked 404
+
+	reverse_proxy labs:8080 {
+		header_down -Set-Cookie
+	}
+}

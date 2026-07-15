@@ -163,7 +163,11 @@ async function pruneOldVersions(
 }
 
 export function stableProjectUrl(labsHost: string, slug: string): string {
-  return `https://${labsHost}/projects/${slug}/`;
+  return `${publicOrigin(labsHost)}/projects/${slug}/`;
+}
+
+export function projectPagePath(slug: string): string {
+  return `/projects/${slug}/`;
 }
 
 function currentPointerPrefix(slug: string): string {
@@ -177,5 +181,11 @@ export function previewProjectUrl(labsHost: string, stagingPrefix: string): stri
     throw new AppError("WEB_PROJECT_INVALID_PREVIEW_PREFIX", 400, "The preview prefix is invalid.");
   }
 
-  return `https://${labsHost}/previews/${match[1]}/`;
+  return `${publicOrigin(labsHost)}/previews/${match[1]}/`;
+}
+
+function publicOrigin(value: string): string {
+  const normalized = value.trim().replace(/\/+$/, "");
+
+  return /^https?:\/\//i.test(normalized) ? normalized : `https://${normalized}`;
 }

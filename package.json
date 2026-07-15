@@ -8,6 +8,8 @@
   },
   "scripts": {
     "dev": "next dev",
+    "dev:full": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev-full.ps1",
+    "dev:full:down": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev-full-down.ps1",
     "setup:dev": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev-setup.ps1",
     "verify:dev": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev-verify.ps1",
     "db:dev:up": "docker compose -f compose.test.yaml up -d db",

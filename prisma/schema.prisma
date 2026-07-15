@@ -17,6 +17,11 @@ enum WebProjectStatus {
   PUBLISHED
 }
 
+enum PageStatus {
+  DRAFT
+  PUBLISHED
+}
+
 enum BackupStatus {
   RUNNING
   SUCCEEDED
@@ -140,6 +145,7 @@ model MediaAsset {
   altText       String         @default("")
   createdAt     DateTime       @default(now())
   articleCovers Article[]      @relation("ArticleCover")
+  pageCovers    Page[]         @relation("PageCover")
   projectCovers WebProject[]   @relation("WebProjectCover")
   siteAvatars   SiteSettings[] @relation("SiteAvatar")
 
@@ -207,6 +213,56 @@ model SiteSettings {
   updatedAt       DateTime    @updatedAt
 
   @@index([avatarMediaId])
+}
+
+model AppearanceSettings {
+  id             String   @id @default("appearance")
+  themePreset    String   @default("aurora")
+  accentPreset   String   @default("sky")
+  backgroundTone String   @default("mist")
+  glassIntensity String   @default("balanced")
+  radiusScale    String   @default("regular")
+  buttonStyle    String   @default("soft")
+  headerDensity  String   @default("standard")
+  footerVisible  Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model HomeLayoutSettings {
+  id                  String   @id @default("home")
+  modules             Json
+  heroTitle           String?
+  heroDescription     String?
+  featuredLabel       String   @default("精选教程")
+  labLabel            String   @default("网页实验室")
+  labTitle            String   @default("把网页项目发布到独立实验室空间")
+  labDescription      String   @default("上传 HTML/ZIP 后，后续会通过隔离域名展示。")
+  archiveLabel        String   @default("教程归档")
+  recentArticlesCount Int      @default(4)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+}
+
+model Page {
+  id               String     @id @default(cuid())
+  title            String
+  slug             String     @unique
+  summary          String     @default("")
+  content          Json
+  status           PageStatus @default(DRAFT)
+  showInNavigation Boolean    @default(false)
+  seoTitle         String     @default("")
+  seoDescription   String     @default("")
+  publishedAt      DateTime?
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+  coverMediaId     String?
+  coverMedia       MediaAsset? @relation("PageCover", fields: [coverMediaId], references: [id], onDelete: SetNull)
+
+  @@index([status, publishedAt])
+  @@index([showInNavigation, status])
+  @@index([coverMediaId])
 }
 
 model BackupRecord {

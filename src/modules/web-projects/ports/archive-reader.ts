@@ -19,7 +19,7 @@ export class ArchiveEntryReadLimitError extends Error {
   readonly maxBytes: number;
 
   constructor(readBytes: number, maxBytes: number) {
-    super(`Archive entry exceeded the ${maxBytes} byte read limit.`);
+    super(`压缩包条目超过 ${maxBytes} 字节读取限制。`);
     this.name = "ArchiveEntryReadLimitError";
     this.readBytes = readBytes;
     this.maxBytes = maxBytes;

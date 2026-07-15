@@ -51,12 +51,12 @@ export default async function ArticleEditorPage({ params }: ArticleEditorPagePro
         </main>
         <aside className="article-admin__meta">
           <h1 id="article-title">编辑文章</h1>
-          <div className="segmented-control" aria-label="Preview mode">
-            <Link href={`/admin/articles/${id}/preview?mode=desktop`}>Desktop</Link>
-            <Link href={`/admin/articles/${id}/preview?mode=mobile`}>Mobile</Link>
+          <div className="segmented-control" aria-label="预览模式">
+            <Link href={`/admin/articles/${id}/preview?mode=desktop`}>桌面</Link>
+            <Link href={`/admin/articles/${id}/preview?mode=mobile`}>手机</Link>
           </div>
           <label>
-            Slug
+            网址标识
             <input defaultValue={article.slug} name="slug" />
           </label>
           <label>

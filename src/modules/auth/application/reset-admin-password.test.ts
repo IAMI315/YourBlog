@@ -20,7 +20,7 @@ describe("resetAdminPasswordHash", () => {
 
     await expect(
       resetAdminPasswordHash({ repository, clock }, "too-short"),
-    ).rejects.toThrow("at least 13 characters");
+    ).rejects.toThrow("至少需要 13 个字符");
     expect(repository.resetAdminPasswordHash).not.toHaveBeenCalled();
   });
 

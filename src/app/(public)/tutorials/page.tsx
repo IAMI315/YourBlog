@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { PublicBackLink } from "../../../components/site/public-back-link";
 import { articleQueries, searchArticles } from "../../../modules/articles/public";
 
 export const dynamic = "force-dynamic";
@@ -25,8 +26,9 @@ export default async function TutorialsPage({ searchParams }: TutorialsPageProps
 
   return (
     <main className="public-page public-page--wide">
+      <PublicBackLink />
       <section className="public-page__header">
-        <p className="home__eyebrow">Tutorials</p>
+        <p className="home__eyebrow">教程</p>
         <h1>技术教程</h1>
         <p>检索和阅读已发布的自托管、部署、工程实践笔记。</p>
         <form className="public-search">

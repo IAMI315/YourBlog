@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import {
   findWebProjectForAdmin,
   listWebProjectVersions,
+  projectPagePath,
 } from "../../../../../modules/web-projects/public";
 import { ProjectUploader } from "../../../../../modules/web-projects/client";
 import { publishUploadedWebProjectAction, rollbackWebProjectAction } from "../actions";
@@ -25,13 +26,13 @@ export default async function WebProjectDetailPage({ params, searchParams }: Web
     <section className="admin-section admin-section--wide" aria-labelledby="web-project-title">
       <div className="admin-section__header">
         <div>
-          <p className="admin-section__eyebrow">Labs Project</p>
+          <p className="admin-section__eyebrow">网页项目</p>
           <h1 id="web-project-title">{project.title}</h1>
           <p>{project.summary || "没有简介。"}</p>
         </div>
-        {project.stableUrl ? (
-          <a className="button" href={project.stableUrl} rel="noreferrer" target="_blank">
-            访问稳定地址
+        {project.status === "PUBLISHED" ? (
+          <a className="button" href={projectPagePath(project.slug)} rel="noreferrer" target="_blank">
+            访问站内地址
           </a>
         ) : null}
       </div>

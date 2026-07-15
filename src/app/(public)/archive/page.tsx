@@ -20,7 +20,7 @@ export default async function ArchivePage() {
   return (
     <main className="public-page">
       <section className="public-page__header">
-        <p className="home__eyebrow">Archive</p>
+        <p className="home__eyebrow">归档</p>
         <h1>文章归档</h1>
         <p>按发布时间回看所有已发布教程。</p>
       </section>

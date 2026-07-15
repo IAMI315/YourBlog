@@ -72,7 +72,7 @@ function assertCompressedSize(compressedBytes: number, limits: UploadLimits): vo
 
 function assertHtmlUpload(filename: string): void {
   if (!/\.(?:html|htm)$/i.test(filename)) {
-    throw new AppError("WEB_PROJECT_UNSUPPORTED_UPLOAD", 400, "Upload a standalone HTML file or a ZIP archive.");
+    throw new AppError("WEB_PROJECT_UNSUPPORTED_UPLOAD", 400, "请上传独立 HTML 文件，或 ZIP 压缩项目。");
   }
 }
 

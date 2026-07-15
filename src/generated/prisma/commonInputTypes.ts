@@ -301,6 +301,36 @@ export type EnumWebProjectStatusWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedEnumWebProjectStatusFilter<$PrismaModel>
 }
 
+export type BoolFilter<$PrismaModel = never> = {
+  equals?: boolean | Prisma.BooleanFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedBoolFilter<$PrismaModel> | boolean
+}
+
+export type BoolWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: boolean | Prisma.BooleanFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedBoolFilter<$PrismaModel>
+  _max?: Prisma.NestedBoolFilter<$PrismaModel>
+}
+
+export type EnumPageStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.PageStatus | Prisma.EnumPageStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.PageStatus[] | Prisma.ListEnumPageStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.PageStatus[] | Prisma.ListEnumPageStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumPageStatusFilter<$PrismaModel> | $Enums.PageStatus
+}
+
+export type EnumPageStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.PageStatus | Prisma.EnumPageStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.PageStatus[] | Prisma.ListEnumPageStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.PageStatus[] | Prisma.ListEnumPageStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumPageStatusWithAggregatesFilter<$PrismaModel> | $Enums.PageStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumPageStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumPageStatusFilter<$PrismaModel>
+}
+
 export type BigIntNullableFilter<$PrismaModel = never> = {
   equals?: bigint | number | Prisma.BigIntFieldRefInput<$PrismaModel> | null
   in?: bigint[] | number[] | Prisma.ListBigIntFieldRefInput<$PrismaModel> | null
@@ -616,6 +646,36 @@ export type NestedEnumWebProjectStatusWithAggregatesFilter<$PrismaModel = never>
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumWebProjectStatusFilter<$PrismaModel>
   _max?: Prisma.NestedEnumWebProjectStatusFilter<$PrismaModel>
+}
+
+export type NestedBoolFilter<$PrismaModel = never> = {
+  equals?: boolean | Prisma.BooleanFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedBoolFilter<$PrismaModel> | boolean
+}
+
+export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: boolean | Prisma.BooleanFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedBoolFilter<$PrismaModel>
+  _max?: Prisma.NestedBoolFilter<$PrismaModel>
+}
+
+export type NestedEnumPageStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.PageStatus | Prisma.EnumPageStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.PageStatus[] | Prisma.ListEnumPageStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.PageStatus[] | Prisma.ListEnumPageStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumPageStatusFilter<$PrismaModel> | $Enums.PageStatus
+}
+
+export type NestedEnumPageStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.PageStatus | Prisma.EnumPageStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.PageStatus[] | Prisma.ListEnumPageStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.PageStatus[] | Prisma.ListEnumPageStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumPageStatusWithAggregatesFilter<$PrismaModel> | $Enums.PageStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumPageStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumPageStatusFilter<$PrismaModel>
 }
 
 export type NestedBigIntNullableFilter<$PrismaModel = never> = {

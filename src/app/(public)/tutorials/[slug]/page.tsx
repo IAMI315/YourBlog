@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
+import { PublicBackLink } from "../../../../components/site/public-back-link";
 import { articleQueries } from "../../../../modules/articles/public";
 import { ArticleRenderer } from "../../../../modules/articles/ui/article-renderer";
 
@@ -43,6 +44,7 @@ export default async function TutorialPage({ params }: TutorialPageProps) {
 
   return (
     <main className="article-page">
+      <PublicBackLink href="/tutorials" label="返回教程" />
       <article>
         <header className="article-page__header">
           <p className="home__eyebrow">{formatDate(article.publishedAt)}</p>

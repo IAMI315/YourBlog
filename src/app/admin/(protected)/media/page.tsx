@@ -16,17 +16,17 @@ export default async function MediaPage({ searchParams }: MediaPageProps) {
     <section className="admin-section" aria-labelledby="media-title">
       <div className="admin-section__header">
         <div>
-          <p className="admin-section__eyebrow">Media</p>
+          <p className="admin-section__eyebrow">媒体管理</p>
           <h1 id="media-title">媒体库</h1>
         </div>
       </div>
       <form action="/api/admin/media" className="media-upload" encType="multipart/form-data" method="post">
-        <label>
-          上传图片
+        <label className="media-field media-field--file">
+          <span>上传图片</span>
           <input accept="image/jpeg,image/png,image/webp,image/avif,image/gif" name="file" required type="file" />
         </label>
-        <label>
-          替代文本
+        <label className="media-field">
+          <span>替代文本</span>
           <input name="altText" placeholder="描述图片内容，发布前必填" />
         </label>
         <button className="button" type="submit">
@@ -34,9 +34,9 @@ export default async function MediaPage({ searchParams }: MediaPageProps) {
           <span>上传</span>
         </button>
       </form>
-      <form className="admin-section__search">
-        <label>
-          搜索
+      <form className="media-search">
+        <label className="media-field media-field--search">
+          <span>搜索</span>
           <input defaultValue={query} name="q" placeholder="按原始文件名搜索" type="search" />
         </label>
         <button className="button" type="submit">
@@ -46,7 +46,7 @@ export default async function MediaPage({ searchParams }: MediaPageProps) {
       <div className="media-library">
         {media.map((item) => (
           <article className="media-library__item" key={item.id}>
-            {/* eslint-disable-next-line @next/next/no-img-element -- Admin media library previews uploaded user files. */}
+            {/* eslint-disable-next-line @next/next/no-img-element -- 管理后台媒体库用于预览用户上传文件。 */}
             <img alt={item.altText || item.originalName} src={getMediaUrl(item.storageKey)} />
             <div>
               <h2>{item.originalName}</h2>
@@ -54,17 +54,19 @@ export default async function MediaPage({ searchParams }: MediaPageProps) {
                 {item.width}×{item.height} · {Math.ceil(item.byteSize / 1024)} KB · 使用 {item.usageCount ?? 0} 次
               </p>
               <form action={updateMediaAltTextAction.bind(null, item.id)}>
-                <label>
-                  替代文本
+                <label className="media-field">
+                  <span>替代文本</span>
                   <input defaultValue={item.altText} name="altText" />
                 </label>
-                <button className="button" type="submit">
-                  保存
-                </button>
-                <DeleteMediaButton
-                  action={deleteUnusedMediaAction.bind(null, item.id)}
-                  disabled={(item.usageCount ?? 0) > 0}
-                />
+                <div className="media-library__actions">
+                  <button className="button" type="submit">
+                    保存
+                  </button>
+                  <DeleteMediaButton
+                    action={deleteUnusedMediaAction.bind(null, item.id)}
+                    disabled={(item.usageCount ?? 0) > 0}
+                  />
+                </div>
               </form>
             </div>
           </article>

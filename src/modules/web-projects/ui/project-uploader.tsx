@@ -141,7 +141,7 @@ export function ProjectUploader({
               <input defaultValue={defaultTitle} name="title" required />
             </label>
             <label>
-              Slug
+              网址标识
               <input defaultValue={defaultSlug} name="slug" pattern="[a-z0-9-]+" required />
             </label>
             <label>

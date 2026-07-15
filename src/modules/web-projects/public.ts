@@ -11,7 +11,10 @@ import {
 import { validateUpload as validateUploadWithDependencies } from "./application/validate-upload";
 import { LocalWebProjectStorage } from "./adapters/local-web-project-storage";
 import { PrismaWebProjectRepository } from "./adapters/prisma-web-project-repository";
-import type { PublishProjectInput } from "./application/publish-project";
+import {
+  projectPagePath,
+  type PublishProjectInput,
+} from "./application/publish-project";
 import type { UploadLimits, ValidatedUpload } from "./domain/web-project";
 import type { ArchiveReader } from "./ports/archive-reader";
 
@@ -92,6 +95,8 @@ export function findWebProjectForAdmin(id: string) {
 export function listWebProjectVersions(projectId: string) {
   return repository.listVersions(projectId);
 }
+
+export { projectPagePath };
 
 export type {
   StagedProject,

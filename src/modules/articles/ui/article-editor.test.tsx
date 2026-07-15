@@ -8,6 +8,7 @@ import type { AutosaveResult, AutosaveSaveInput } from "./use-autosave";
 
 const codeBlockLabel = "\u4ee3\u7801\u5757";
 const unsyncedStatus = "\u5c1a\u672a\u540c\u6b65";
+const editorLabel = "文章内容";
 
 const initialValue = {
   type: "doc",
@@ -22,7 +23,7 @@ afterEach(() => {
 describe("ArticleEditor", () => {
   it("opens a keyboard-navigable slash menu and inserts a code block", async () => {
     render(<ArticleEditor articleId="draft-1" initialRevision={1} initialValue={initialValue} />);
-    const editor = screen.getByRole("textbox", { name: "Article content" });
+    const editor = screen.getByRole("textbox", { name: editorLabel });
 
     fireEvent.focus(editor);
     fireEvent.keyDown(editor, { key: "/" });
@@ -51,11 +52,11 @@ describe("ArticleEditor", () => {
         save={save}
       />,
     );
-    const editor = screen.getByRole("textbox", { name: "Article content" });
+    const editor = screen.getByRole("textbox", { name: editorLabel });
 
     editor.textContent = "hello updated";
     fireEvent.input(editor);
-    expect(screen.getByRole("button", { name: "Publish" })).toHaveProperty("disabled", true);
+    expect(screen.getByRole("button", { name: "发布" })).toHaveProperty("disabled", true);
     act(() => vi.advanceTimersByTime(1499));
     expect(save).not.toHaveBeenCalled();
 
@@ -76,7 +77,7 @@ describe("ArticleEditor", () => {
         save={save}
       />,
     );
-    const editor = screen.getByRole("textbox", { name: "Article content" });
+    const editor = screen.getByRole("textbox", { name: editorLabel });
 
     editor.textContent = "hello local";
     fireEvent.input(editor);
@@ -103,7 +104,7 @@ describe("ArticleEditor", () => {
         save={save}
       />,
     );
-    const editor = screen.getByRole("textbox", { name: "Article content" });
+    const editor = screen.getByRole("textbox", { name: editorLabel });
 
     editor.textContent = "conflicting local edit";
     fireEvent.input(editor);
@@ -114,9 +115,9 @@ describe("ArticleEditor", () => {
       await Promise.resolve();
     });
 
-    expect(screen.getByText("REVISION_CONFLICT")).toBeTruthy();
-    expect(screen.getByRole("button", { name: "Reload" })).toBeTruthy();
-    expect(screen.getByRole("button", { name: "Save as new draft" })).toBeTruthy();
+    expect(screen.getByText("修订冲突")).toBeTruthy();
+    expect(screen.getByRole("button", { name: "重新加载" })).toBeTruthy();
+    expect(screen.getByRole("button", { name: "另存为新草稿" })).toBeTruthy();
     expect(screen.getByTestId("article-json").textContent).toContain("conflicting local edit");
   });
 
@@ -140,7 +141,7 @@ describe("ArticleEditor", () => {
         save={save}
       />,
     );
-    const editor = screen.getByRole("textbox", { name: "Article content" });
+    const editor = screen.getByRole("textbox", { name: editorLabel });
 
     editor.textContent = "first edit";
     fireEvent.input(editor);

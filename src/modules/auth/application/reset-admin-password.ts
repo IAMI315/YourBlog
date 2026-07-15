@@ -15,7 +15,7 @@ export async function resetAdminPasswordHash(
   password: string,
 ): Promise<void> {
   if (password.length < MIN_ADMIN_PASSWORD_LENGTH) {
-    throw new Error(`Admin password must be at least ${MIN_ADMIN_PASSWORD_LENGTH} characters.`);
+    throw new Error(`管理员密码至少需要 ${MIN_ADMIN_PASSWORD_LENGTH} 个字符。`);
   }
 
   const passwordHash = await hash(password, { type: argon2id });

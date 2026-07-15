@@ -128,7 +128,7 @@ export class PrismaArticleRepository implements ArticleRepository {
           throw new AppError(
             "REVISION_CONFLICT",
             409,
-            "This article changed remotely. Reload before saving.",
+            "这篇文章已在其他位置被修改，请重新加载后再保存。",
           );
         }
       }

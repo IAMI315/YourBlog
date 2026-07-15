@@ -21,7 +21,7 @@ export default async function BackupsPage() {
     <section className="admin-section admin-section--wide" aria-labelledby="backups-title">
       <div className="admin-section__header">
         <div>
-          <p className="admin-section__eyebrow">Operations</p>
+          <p className="admin-section__eyebrow">运维</p>
           <h1 id="backups-title">备份与恢复</h1>
           <p>备份脚本会导出 PostgreSQL、媒体库和网页项目，并写入 SHA-256 校验。</p>
         </div>

@@ -25,6 +25,14 @@ export const WebProjectStatus = {
 export type WebProjectStatus = (typeof WebProjectStatus)[keyof typeof WebProjectStatus]
 
 
+export const PageStatus = {
+  DRAFT: 'DRAFT',
+  PUBLISHED: 'PUBLISHED'
+} as const
+
+export type PageStatus = (typeof PageStatus)[keyof typeof PageStatus]
+
+
 export const BackupStatus = {
   RUNNING: 'RUNNING',
   SUCCEEDED: 'SUCCEEDED',

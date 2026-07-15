@@ -197,6 +197,29 @@ http://localhost:3000
 http://localhost:3000/admin
 ```
 
+### 完整开发模式
+
+需要同时调试 HTML/ZIP 网页项目、`/projects/<slug>/` 站内路径、隔离预览和后台时，使用完整开发模式：
+
+```powershell
+corepack pnpm@11.11.0 dev:full
+```
+
+它不会构建 YourBlog 应用镜像。Next.js 直接在本机以热更新模式运行；Docker 仅启动 PostgreSQL、Caddy 和 Nginx 静态项目服务。
+
+完整开发模式使用独立且持久化的开发数据库（默认 `5434` 端口），不会影响测试数据库或生产容器。
+
+```text
+博客与后台：http://blog.localhost:32124
+项目预览：http://labs.localhost:32124
+```
+
+按 `Ctrl+C` 停止 Next.js。停止完整开发模式的基础服务：
+
+```powershell
+corepack pnpm@11.11.0 dev:full:down
+```
+
 本地默认管理员密码：
 
 ```text

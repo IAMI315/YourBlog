@@ -13,7 +13,7 @@ export default async function AboutPage() {
   return (
     <main className="public-page">
       <section className="public-page__header">
-        <p className="home__eyebrow">About</p>
+        <p className="home__eyebrow">关于</p>
         <h1>{settings.authorName}</h1>
         <p>{settings.authorBio}</p>
       </section>

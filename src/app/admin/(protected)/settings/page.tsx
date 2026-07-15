@@ -25,7 +25,7 @@ export default async function SettingsPage({ searchParams }: SettingsPageProps) 
     <section className="admin-section" aria-labelledby="settings-title">
       <div className="admin-section__header">
         <div>
-          <p className="admin-section__eyebrow">Settings</p>
+          <p className="admin-section__eyebrow">站点设置</p>
           <h1 id="settings-title">站点身份</h1>
         </div>
         {params.saved ? (

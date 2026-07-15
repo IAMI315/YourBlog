@@ -63,11 +63,30 @@ describe("production proxy and compose configuration", () => {
     expect(compose.match(/restart: unless-stopped/g)).toHaveLength(5);
   });
 
+  it("defines a no-build full development proxy for the local Next.js process", async () => {
+    const compose = await file("compose.dev.yaml");
+    const caddyfile = await file("docker/Caddyfile.dev");
+
+    expect(compose).toContain("name: yourblog-dev");
+    expect(compose).toContain("image: nginx:1.29-alpine");
+    expect(compose).toContain("image: caddy:2.10-alpine");
+    expect(compose).toContain("image: postgres:17-alpine");
+    expect(compose).not.toContain("build:");
+    expect(compose).toContain("${DEV_HTTP_PORT:-32124}:80");
+    expect(compose).toContain("${DEV_DB_PORT:-5434}:5432");
+    expect(compose).toContain("dev-postgres-data:");
+    expect(compose).toContain("./data/web-projects:/usr/share/nginx/html:ro");
+    expect(compose).toContain("host.docker.internal:host-gateway");
+    expect(caddyfile).toContain("reverse_proxy host.docker.internal:3000");
+    expect(caddyfile).toContain("handle /projects/*");
+  });
+
   it("routes blog and labs hosts to separate upstreams in Caddy", async () => {
     const caddyfile = await file("docker/Caddyfile");
 
     expect(caddyfile).toContain("{$BLOG_HOST}");
     expect(caddyfile).toContain("reverse_proxy app:3000");
+    expect(caddyfile).toContain("handle /projects/*");
     expect(caddyfile).toContain("{$LABS_HOST}");
     expect(caddyfile).toContain("reverse_proxy labs:8080");
     expect(caddyfile).toContain("header_down -Set-Cookie");

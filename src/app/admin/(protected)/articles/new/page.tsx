@@ -25,8 +25,8 @@ export default function NewArticlePage() {
         <aside className="article-admin__meta">
           <h1 id="new-article-title">新建文章</h1>
           <label>
-            Slug
-            <input name="slug" placeholder="auto-generated" />
+            网址标识
+            <input name="slug" placeholder="留空自动生成" />
           </label>
           <label>
             摘要
